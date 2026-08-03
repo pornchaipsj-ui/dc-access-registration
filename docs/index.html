@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ระบบอัปโหลด StaffTemplate เพื่อขอเข้าพื้นที่ศูนย์คอมพิวเตอร์">
+  <title>Upload StaffTemplate</title>
+  <link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <div class="brand">
+        <span class="brand__mark">DC</span>
+        <span><strong>Access Registration</strong><small>StaffTemplate Upload</small></span>
+      </div>
+    </div>
+  </header>
+  <div id="mode-banner" class="mode-banner" hidden></div>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Access Request</p>
+        <h1>อัปโหลด StaffTemplate</h1>
+        <p>กรอกข้อมูลส่วนกลางแล้วอัปโหลดไฟล์ StaffTemplate ระบบจะตรวจสอบรายชื่อและนำข้อมูลไปสร้าง FR-037 ให้อัตโนมัติ โดยเวลาเข้า–ออกและเลขบัตร TIDC ให้ รปภ. บันทึกภายหลัง</p>
+      </div>
+    </section>
+
+    <div id="submission-result" hidden></div>
+
+    <form id="access-form">
+      <section class="panel">
+        <div class="panel__header">
+          <div><h2>1. ข้อมูลการเข้าพื้นที่</h2><p>ไม่มีช่องเวลาเข้า–ออก ผู้ยื่นคำขอระบุเฉพาะวันที่ตามแผน</p></div>
+        </div>
+        <div class="form-grid">
+          <label>Location / สถานที่ <span>*</span>
+            <select id="location" required>
+              <option value="">เลือกสถานที่</option>
+              <option>TT1</option><option>TT2</option><option>MTG</option><option>BNA</option><option>RYG</option>
+            </select>
+          </label>
+          <label>วันที่เข้าพื้นที่ตามแผน <span>*</span><input id="visit-date" type="date" required></label>
+          <label>Project Name <span>*</span><input id="project-name" maxlength="160" required placeholder="เช่น Customer Project"></label>
+          <label>Room / พื้นที่ <span>*</span><input id="room" maxlength="100" required placeholder="เช่น DH01, SCR1"></label>
+          <label class="span-2">Objective / วัตถุประสงค์ <span>*</span><input id="objective" maxlength="240" required placeholder="เช่น Install server"></label>
+          <label>ผู้ประสานงานภายใน<input id="host-name" maxlength="160" placeholder="ชื่อ-นามสกุล"></label>
+          <label>เบอร์ผู้ประสานงาน<input id="host-phone" inputmode="tel" maxlength="20" placeholder="08x-xxx-xxxx"></label>
+          <label class="span-4">หมายเหตุ<textarea id="notes" maxlength="1000" placeholder="รายละเอียดเพิ่มเติม / อุปกรณ์ที่นำเข้า / ข้อควรระวัง"></textarea></label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__header">
+          <div><h2>2. Upload StaffTemplate</h2><p>รองรับไฟล์ .xlsx และสูงสุด 25 รายชื่อ ตามจำนวนแถวใน FR-037</p></div>
+          <span id="attendee-count" class="badge">0/25</span>
+        </div>
+
+        <label id="upload-zone" class="upload-zone" for="staff-file">
+          <input id="staff-file" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+          <span class="upload-zone__icon">↑</span>
+          <strong>เลือกหรือวางไฟล์ StaffTemplate.xlsx</strong>
+          <small>ระบบอ่านข้อมูลจากชีต Data เท่านั้น และไม่เก็บไฟล์ต้นฉบับไว้ในฐานข้อมูล</small>
+        </label>
+
+        <div class="upload-help">
+          <div>
+            <strong>คอลัมน์ที่ต้องมี</strong>
+            <p>COMPANY, ATTENDEE TYPE, NAME, MOBILE, EMAIL, CARD TYPE, ID, CAR LICENSE</p>
+          </div>
+          <a class="button button--secondary" href="./templates/StaffTemplate.xlsx" download>ดาวน์โหลด StaffTemplate เปล่า</a>
+        </div>
+
+        <div id="file-status" class="file-status" hidden></div>
+        <div id="file-errors" class="error-list" hidden></div>
+
+        <div id="preview-section" hidden>
+          <div class="preview-heading"><h3>ตัวอย่างข้อมูลที่จะส่ง</h3><span id="source-file-name"></span></div>
+          <div class="table-wrap table-wrap--preview">
+            <table>
+              <thead><tr><th>No.</th><th>Name</th><th>Type</th><th>Company</th><th>Mobile</th><th>Email</th><th>ID/Passport</th><th>Car</th></tr></thead>
+              <tbody id="preview-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="privacy-note"><strong>การคุ้มครองข้อมูล:</strong> ระบบอ่านเลข ID / Passport ภายในเบราว์เซอร์ แล้วส่งขึ้นฐานข้อมูลเฉพาะ 4 ตัวท้ายและเลขแบบปกปิดเท่านั้น ไม่ส่งเลขเต็มและไม่เก็บไฟล์ต้นฉบับ</div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__header"><div><h2>3. ยืนยันข้อมูล</h2><p>ตรวจสอบวันที่ สถานที่ และรายชื่อจากไฟล์ก่อนส่งคำขอ</p></div></div>
+        <div class="form-actions">
+          <label class="consent"><input type="checkbox" required><span>ข้าพเจ้ายืนยันว่าข้อมูลถูกต้อง และยินยอมให้ใช้ข้อมูลเพื่อการควบคุมการเข้า-ออกพื้นที่และการรักษาความปลอดภัย</span></label>
+          <button id="submit-button" class="button button--primary" type="submit">ส่ง StaffTemplate</button>
+        </div>
+      </section>
+    </form>
+  </main>
+  <footer class="site-footer">หลังได้รับอนุมัติ รปภ. จะบันทึกเวลาเข้า–ออก และเวลาแลก–คืนบัตร</footer>
+  <script src="./assets/config.js" defer></script>
+  <script src="./assets/common.js" defer></script>
+  <script src="./assets/app.js" defer></script>
+</body>
+</html>
