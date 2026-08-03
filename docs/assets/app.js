@@ -66,22 +66,52 @@
   }
 
   function identityInfo(value) {
-    const raw = String(value || "").replace(/[\s-]/g, "").toUpperCase();
-    if (!raw) throw new Error("ID ว่าง");
+  const raw = String(value || "")
+    .replace(/[\s-]/g, "")
+    .toUpperCase();
 
-    let last4 = "";
-    if (/[X*]/.test(raw)) {
-      const visibleGroups = raw.split(/[X*]+/).filter(Boolean);
-      const candidates = visibleGroups
-        .map((group) => group.replace(/[^A-Z0-9]/g, ""))
-        .filter((group) => group.length >= 4);
-      if (candidates.length) last4 = candidates.sort((a, b) => b.length - a.length)[0].slice(-4);
-    }
-    if (!last4) last4 = raw.replace(/[^A-Z0-9]/g, "").slice(-4);
-    if (!/^[A-Z0-9]{4}$/.test(last4)) throw new Error("ID / Passport ต้องมีข้อมูลที่อ่านได้อย่างน้อย 4 ตัว");
-
-    return { last4, masked: `XXXX${last4}` };
+  if (!raw) {
+    return {
+      last4: null,
+      masked: null
+    };
   }
+
+  let last4 = "";
+
+  if (/[X*]/.test(raw)) {
+    const visibleGroups = raw
+      .split(/[X*]+/)
+      .filter(Boolean);
+
+    const candidates = visibleGroups
+      .map((group) => group.replace(/[^A-Z0-9]/g, ""))
+      .filter((group) => group.length >= 4);
+
+    if (candidates.length) {
+      last4 = candidates
+        .sort((a, b) => b.length - a.length)[0]
+        .slice(-4);
+    }
+  }
+
+  if (!last4) {
+    last4 = raw
+      .replace(/[^A-Z0-9]/g, "")
+      .slice(-4);
+  }
+
+  if (!/^[A-Z0-9]{4}$/.test(last4)) {
+    throw new Error(
+      "ID / Passport ถ้าระบุ ต้องมีข้อมูลอย่างน้อย 4 ตัว"
+    );
+  }
+
+  return {
+    last4,
+    masked: `XXXX${last4}`
+  };
+}
 
   function clearFileState() {
     parsedAttendees = [];
@@ -110,10 +140,16 @@
         <td><strong>${escapeHtml(person.name)}</strong></td>
         <td>${escapeHtml(attendeeTypeLabel(person.attendee_type))}</td>
         <td>${escapeHtml(person.company)}</td>
-        <td>${escapeHtml(person.mobile)}</td>
-        <td>${escapeHtml(person.email)}</td>
-        <td>${escapeHtml(person.card_type)} / ${escapeHtml(person.identity_last4)}</td>
-        <td>${escapeHtml(person.car_license || "N/A")}</td>
+<td>${escapeHtml(person.mobile || "-")}</td>
+<td>${escapeHtml(person.email || "-")}</td>
+<td>
+  ${
+    person.identity_last4
+      ? `${escapeHtml(person.card_type || "-")} / ${escapeHtml(person.identity_last4)}`
+      : "-"
+  }
+</td>
+<td>${escapeHtml(person.car_license || "N/A")}</td>
       </tr>`).join("");
     previewSection.hidden = false;
     fileStatus.hidden = false;
@@ -135,14 +171,23 @@
     if (!name) errors.push("NAME ว่าง");
     // MOBILE และ EMAIL ไม่บังคับรูปแบบ และสามารถเว้นว่างได้
 
-    if (!allowedCardTypes.has(cardType)) errors.push(`CARD TYPE ต้องเป็น ID หรือ PASSPORT (${cardTypeRaw || "ว่าง"})`);
+    // MOBILE, EMAIL, CARD TYPE และ ID สามารถเว้นว่างได้
+if (cardType && !allowedCardTypes.has(cardType)) {
+  errors.push(
+    `CARD TYPE ต้องเป็น ID หรือ PASSPORT (${cardTypeRaw})`
+  );
+}
 
-    let identity;
-    try {
-      identity = identityInfo(identityRaw);
-    } catch (error) {
-      errors.push(error.message);
-    }
+let identity = {
+  last4: null,
+  masked: null
+};
+
+try {
+  identity = identityInfo(identityRaw);
+} catch (error) {
+  errors.push(error.message);
+}
 
     if (errors.length) {
       return { errors: errors.map((message) => `แถว ${excelRow}: ${message}`) };
@@ -150,16 +195,16 @@
 
     return {
       attendee: {
-        company: company.slice(0, 120),
-        attendee_type: attendeeType,
-        name: name.slice(0, 160),
-        mobile: mobile.slice(0, 20),
-        email: email.slice(0, 160),
-        card_type: cardType,
-        identity_last4: identity.last4,
-        identity_masked: identity.masked,
-        car_license: (carLicenseRaw || "N/A").slice(0, 30)
-      },
+  company: company.slice(0, 120),
+  attendee_type: attendeeType,
+  name: name.slice(0, 160),
+  mobile: mobile.slice(0, 100),
+  email: email.slice(0, 200),
+  card_type: cardType || null,
+  identity_last4: identity.last4,
+  identity_masked: identity.masked,
+  car_license: (carLicenseRaw || "").slice(0, 50)
+},
       errors: []
     };
   }
