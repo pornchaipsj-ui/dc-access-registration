@@ -93,7 +93,7 @@ const actions = `
 
     ${approvalButtons}
   </div>
-`;`<div class="detail-actions"><button class="button button--success status-action" data-status="approved">Approve</button><button class="button button--danger status-action" data-status="rejected">Reject</button></div>`:'';
+`;
   content.innerHTML=`<div class="detail-header"><div><p class="eyebrow">${escapeHtml(r.request_code)}</p><h2>${escapeHtml(r.project_name)}</h2></div><button id="close-detail" class="icon-button">×</button></div><div class="detail-meta"><div><span>Location</span><strong>${escapeHtml(r.location)}</strong></div><div><span>Date</span><strong>${escapeHtml(formatDate(r.visit_date))}</strong></div><div><span>Room</span><strong>${escapeHtml(r.room)}</strong></div><div><span>Objective</span><strong>${escapeHtml(r.objective)}</strong></div><div><span>ผู้ประสานงาน</span><strong>${escapeHtml(r.host_name||'-')} ${escapeHtml(r.host_phone||'')}</strong></div><div><span>Status</span><strong>${badge(r.status)}</strong></div></div><div class="table-wrap"><table><thead><tr><th>No.</th>
 <th>Name</th>
 <th>Company</th>
