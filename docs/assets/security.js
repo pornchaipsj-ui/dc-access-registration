@@ -5,7 +5,47 @@ function badge(s){return `<span class="status status--${s}">${({approved:'อน
 async function load(){if(demoMode)requests=readDemoRequests();else{const r=await client.from('access_requests').select('*, attendees(*)').in('status',['approved','completed']).order('visit_date');if(r.error)throw r.error;requests=r.data||[]}render()}
 function render(){const term=q('#search').value.toLowerCase(),dt=q('#date-filter').value,st=q('#status-filter').value;const rows=requests.filter(r=>(!st||r.status===st)&&(!dt||r.visit_date===dt)&&(!term||JSON.stringify(r).toLowerCase().includes(term)));tbody.innerHTML=rows.map(r=>`<tr data-id="${r.id}"><td><strong>${escapeHtml(r.request_code)}</strong></td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.project_name)}<small>${escapeHtml(r.room)}</small></td><td>${escapeHtml(formatDate(r.visit_date))}</td><td>${(r.attendees||[]).length}</td><td>${badge(r.status)}</td><td><button class="mini-button">บันทึกเวลา</button></td></tr>`).join('');empty.hidden=rows.length>0}
 const timeEditor=(cls,val)=>`<div class="time-editor"><input class="table-input ${cls}" type="time" value="${escapeHtml(formatTime(val))}"><button type="button" class="mini-button time-now" data-target="${cls}">ตอนนี้</button></div>`;
-function open(r){selected=r;const rows=(r.attendees||[]).map((p,i)=>`<tr data-attendee-id="${p.id}"><td>${i+1}</td><td><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.company)}</small></td><td><input class="table-input tidc-card" value="${escapeHtml(p.tidc_card_no||'')}" placeholder="Card no."></td><td>${timeEditor('entry-time',p.entry_time)}</td><td>${timeEditor('exit-time',p.exit_time)}</td><td>${timeEditor('card-exchange',p.card_exchange_time)}</td><td>${timeEditor('card-return',p.card_return_time)}</td></tr>`).join('');content.innerHTML=`<div class="detail-header"><div><p class="eyebrow">${escapeHtml(r.request_code)}</p><h2>${escapeHtml(r.project_name)}</h2></div><button id="close-detail" class="icon-button">×</button></div><div class="detail-meta"><div><span>Location</span><strong>${escapeHtml(r.location)}</strong></div><div><span>Date</span><strong>${escapeHtml(formatDate(r.visit_date))}</strong></div><div><span>Room</span><strong>${escapeHtml(r.room)}</strong></div><div><span>Objective</span><strong>${escapeHtml(r.objective)}</strong></div></div><div class="security-instruction"><strong>ลำดับการบันทึก:</strong> Card No. → เวลาเข้า → เวลาออก → เวลาแลกบัตร → เวลาคืนบัตร</div><div class="table-wrap table-wrap--detail"><table class="security-table"><thead><tr><th>No.</th><th>Name / Company</th><th>Card No.</th><th>เวลาเข้า</th><th>เวลาออก</th><th>เวลาแลกบัตร</th><th>เวลาคืนบัตร</th></tr></thead><tbody>${rows}</tbody></table></div><div class="detail-actions"><button id="save" class="button button--primary">บันทึกข้อมูล รปภ.</button><button id="complete" class="button button--success">เสร็จสิ้น</button><span class="action-divider"></span><button id="export-fr" class="button button--secondary">ดาวน์โหลด FR-037</button><button id="print-fr" class="button button--ghost">พิมพ์ FR-037</button></div>`;detail.hidden=false}
+function open(r) {
+  selected = r;
+
+  const rows = (r.attendees || []).map((p, i) => `
+    <tr data-attendee-id="${p.id}">
+      <td>${i + 1}</td>
+
+      <td>
+        <strong>${escapeHtml(p.name)}</strong>
+        <small>${escapeHtml(p.company)}</small>
+      </td>
+
+      <td>${escapeHtml(p.card_type || "-")}</td>
+
+      <td>
+        ${escapeHtml(
+          p.identity_masked ||
+          p.identity_last4 ||
+          "-"
+        )}
+      </td>
+
+      <td>
+        <input
+          class="table-input tidc-card"
+          value="${escapeHtml(p.tidc_card_no || "")}"
+          placeholder="Card no."
+        >
+      </td>
+
+      <td>${timeEditor("entry-time", p.entry_time)}</td>
+      <td>${timeEditor("exit-time", p.exit_time)}</td>
+      <td>${timeEditor("card-exchange", p.card_exchange_time)}</td>
+      <td>${timeEditor("card-return", p.card_return_time)}</td>
+    </tr>
+  `).join("");content.innerHTML=`<div class="detail-header"><div><p class="eyebrow">${escapeHtml(r.request_code)}</p><h2>${escapeHtml(r.project_name)}</h2></div><button id="close-detail" class="icon-button">×</button></div><div class="detail-meta"><div><span>Location</span><strong>${escapeHtml(r.location)}</strong></div><div><span>Date</span><strong>${escapeHtml(formatDate(r.visit_date))}</strong></div><div><span>Room</span><strong>${escapeHtml(r.room)}</strong></div><div><span>Objective</span><strong>${escapeHtml(r.objective)}</strong></div></div><div class="security-instruction"><strong>ลำดับการบันทึก:</strong> Card No. → เวลาเข้า → เวลาออก → เวลาแลกบัตร → เวลาคืนบัตร</div><div class="table-wrap table-wrap--detail"><table class="security-table"><thead><tr><th>No.</th>
+<th>Name / Company</th><th>Card Type</th><th>ID / Passport</th><th>Card No.</th>
+<th>เวลาเข้า</th>
+<th>เวลาออก</th>
+<th>เวลาแลกบัตร</th>
+<th>เวลาคืนบัตร</th></tr></thead><tbody>${rows}</tbody></table></div><div class="detail-actions"><button id="save" class="button button--primary">บันทึกข้อมูล รปภ.</button><button id="complete" class="button button--success">เสร็จสิ้น</button><span class="action-divider"></span><button id="export-fr" class="button button--secondary">ดาวน์โหลด FR-037</button><button id="print-fr" class="button button--ghost">พิมพ์ FR-037</button></div>`;detail.hidden=false}
 function clock(){return new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date())}
 function collect(){return [...content.querySelectorAll('tr[data-attendee-id]')].map(row=>{const entry=row.querySelector('.entry-time').value||null,exit=row.querySelector('.exit-time').value||null,exchange=row.querySelector('.card-exchange').value||null,returned=row.querySelector('.card-return').value||null;if(exit&&!entry)throw new Error('กรุณาระบุเวลาเข้าก่อนเวลาออก');if(returned&&!exchange)throw new Error('กรุณาระบุเวลาแลกบัตรก่อนเวลาคืนบัตร');return{id:row.dataset.attendeeId,tidc_card_no:row.querySelector('.tidc-card').value.trim()||null,card_exchange_time:exchange,entry_time:entry,exit_time:exit,card_return_time:returned}})}
 async function save(){const patches=collect();let u;if(demoMode){const m=new Map(patches.map(x=>[x.id,x]));u=updateDemoRequest(selected.id,{attendees:(selected.attendees||[]).map(p=>({...p,...m.get(p.id)}))})}else{for(const p of patches){const {id,...data}=p;const r=await client.from('attendees').update(data).eq('id',id);if(r.error)throw r.error}const r=await client.from('access_requests').select('*, attendees(*)').eq('id',selected.id).single();if(r.error)throw r.error;u=r.data}requests[requests.findIndex(x=>x.id===u.id)]=u;selected=u;open(u);render();alert('บันทึกเรียบร้อย')}
