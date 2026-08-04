@@ -242,5 +242,18 @@ async function saveAttendeeIdentity() {
       });
   }
 };
+        ["search", "status-filter", "date-filter"].forEach((id) => {
+  q("#" + id).addEventListener("input", render);
+  q("#" + id).addEventListener("change", render);
+});
+
+q("#refresh-button").onclick = () => {
+  load().catch((error) => {
+    alert(
+      error.message ||
+      "ไม่สามารถรีเฟรชข้อมูลได้"
+    );
+  });
+};
 function show(){login.hidden=true;dash.hidden=false;load().catch(e=>alert(e.message))} function signin(){if(demoMode){q('#mode-banner').hidden=false;q('#mode-banner').innerHTML='<strong>Demo mode:</strong> ใช้งานในเบราว์เซอร์เครื่องเดียว';q('#logout-button').hidden=true;show();return}client=getClient().then(c=>{client=c;return c.auth.getSession()}).then(({data})=>data.session?show():(login.hidden=false));}
 q('#login-form').onsubmit=async e=>{e.preventDefault();client=client||await getClient();const {error}=await client.auth.signInWithPassword({email:q('#admin-email').value,password:q('#admin-password').value});if(error){q('#login-error').textContent=error.message;q('#login-error').hidden=false}else show()};q('#logout-button').onclick=async()=>{await client.auth.signOut();location.reload()};signin();})();
