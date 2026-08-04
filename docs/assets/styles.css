@@ -280,3 +280,36 @@ tbody tr:hover { background: #f7fafc; }
     grid-template-columns: 1fr;
   }
 }
+.access-info-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+}
+
+.access-info-grid .span-2 {
+  grid-column: span 2;
+}
+
+.requester-group {
+  grid-column: span 4;
+}
+
+@media (max-width: 900px) {
+  .access-info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .requester-group {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .access-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .access-info-grid .span-2,
+  .requester-group {
+    grid-column: span 1;
+  }
+}
