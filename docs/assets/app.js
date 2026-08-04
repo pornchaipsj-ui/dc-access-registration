@@ -25,6 +25,9 @@
   const modeBanner = document.querySelector("#mode-banner");
   const attendeeCount = document.querySelector("#attendee-count");
   const visitDateInput = document.querySelector("#visit-date");
+  const visitEndDateInput = document.querySelector("#visit-end-date");
+  const visitEndDateInput =
+  document.querySelector("#visit-end-date");
   const maxAttendees = Number(config.MAX_ATTENDEES || 25);
   const maxFileSize = Number(config.MAX_FILE_SIZE_MB || 5) * 1024 * 1024;
 
@@ -271,21 +274,54 @@ try {
   }
 
   function collectRequest() {
-    const value = (selector) => document.querySelector(selector).value.trim();
-    const visitDate = value("#visit-date");
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(visitDate)) throw new Error("กรุณาระบุวันที่เข้าพื้นที่");
-    return {
-      location: value("#location"),
-      visit_date: visitDate,
-      project_name: value("#project-name"),
-      objective: value("#objective"),
-      room: value("#room"),
-      host_name: value("#host-name") || null,
-      host_phone: value("#host-phone") || null,
-      notes: value("#notes") || null,
-      source_file_name: selectedFileName.slice(0, 255)
-    };
+  const value = (selector) =>
+    document.querySelector(selector).value.trim();
+
+  const visitDate = value("#visit-date");
+  const visitEndDate = value("#visit-end-date");
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(visitDate)) {
+    throw new Error("กรุณาระบุวันที่เริ่มงาน");
   }
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(visitEndDate)) {
+    throw new Error("กรุณาระบุวันที่สิ้นสุดงาน");
+  }
+
+  const start = new Date(`${visitDate}T00:00:00`);
+  const end = new Date(`${visitEndDate}T00:00:00`);
+
+  const totalDays =
+    Math.floor(
+      (end.getTime() - start.getTime()) /
+      86400000
+    ) + 1;
+
+  if (totalDays < 1) {
+    throw new Error(
+      "วันที่สิ้นสุดต้องไม่น้อยกว่าวันที่เริ่มงาน"
+    );
+  }
+
+  if (totalDays > 7) {
+    throw new Error(
+      "ระยะเวลาทำงานต้องไม่เกิน 7 วัน"
+    );
+  }
+
+  return {
+    location: value("#location"),
+    visit_date: visitDate,
+    visit_end_date: visitEndDate,
+    project_name: value("#project-name"),
+    objective: value("#objective"),
+    room: value("#room"),
+    host_name: value("#host-name") || null,
+    host_phone: value("#host-phone") || null,
+    notes: value("#notes") || null,
+    source_file_name: selectedFileName.slice(0, 255)
+  };
+}
 
   async function submitRequest(request, attendees) {
     if (demoMode) return saveDemoRequest(request, attendees);
@@ -359,6 +395,8 @@ try {
       form.reset();
       clearFileState();
       visitDateInput.value = todayDateString();
+      visitEndDateInput.value = todayDateString();
+updateVisitEndDateLimit();
     } catch (error) {
       window.alert(error.message || "ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่");
     } finally {
@@ -368,7 +406,57 @@ try {
   });
 
   visitDateInput.min = todayDateString();
-  visitDateInput.value = todayDateString();
+visitDateInput.value = todayDateString();
+
+visitEndDateInput.min = todayDateString();
+visitEndDateInput.value = todayDateString();
+
+function updateVisitEndDateLimit() {
+  if (!visitDateInput.value) return;
+
+  const startDate = new Date(
+    `${visitDateInput.value}T00:00:00`
+  );
+
+  const maximumEndDate = new Date(startDate);
+
+  // วันเริ่มนับเป็นวันที่ 1 จึงบวกได้อีก 6 วัน
+  maximumEndDate.setDate(
+    maximumEndDate.getDate() + 6
+  );
+
+  const maxDate = [
+    maximumEndDate.getFullYear(),
+    String(
+      maximumEndDate.getMonth() + 1
+    ).padStart(2, "0"),
+    String(
+      maximumEndDate.getDate()
+    ).padStart(2, "0")
+  ].join("-");
+
+  visitEndDateInput.min =
+    visitDateInput.value;
+
+  visitEndDateInput.max = maxDate;
+
+  if (
+    !visitEndDateInput.value ||
+    visitEndDateInput.value <
+      visitDateInput.value ||
+    visitEndDateInput.value > maxDate
+  ) {
+    visitEndDateInput.value =
+      visitDateInput.value;
+  }
+}
+
+visitDateInput.addEventListener(
+  "change",
+  updateVisitEndDateLimit
+);
+
+updateVisitEndDateLimit();
 
   if (demoMode) {
     modeBanner.hidden = false;
