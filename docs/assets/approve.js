@@ -4,7 +4,15 @@ const q=s=>document.querySelector(s); let client=null,requests=[],selected=null;
 const login=q('#login-panel'),dash=q('#dashboard'),tbody=q('#request-table-body'),empty=q('#empty-state'),detail=q('#detail-panel'),content=q('#detail-content');
 function badge(s){return `<span class="status status--${s}">${({pending:'รอตรวจสอบ',approved:'อนุมัติแล้ว',rejected:'ไม่อนุมัติ',completed:'เสร็จสิ้น'})[s]||s}</span>`}
 async function load(){ if(demoMode) requests=readDemoRequests(); else {const r=await client.from('access_requests').select('*, attendees(*)').order('created_at',{ascending:false}); if(r.error) throw r.error; requests=r.data||[]} render(); }
-function render(){const term=q('#search').value.toLowerCase(),st=q('#status-filter').value,dt=q('#date-filter').value; const rows=requests.filter(r=>(!st||r.status===st)&&(!dt||r.visit_date===dt)&&(!term||JSON.stringify(r).toLowerCase().includes(term))); tbody.innerHTML=rows.map(r=>`<tr data-id="${r.id}"><td><strong>${escapeHtml(r.request_code)}</strong></td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.project_name)}<small>${escapeHtml(r.room)}</small></td><td>${escapeHtml(formatDate(r.visit_date))}</td><td>${(r.attendees||[]).length}</td><td>${badge(r.status)}</td><td><button class="mini-button view">ตรวจสอบ</button></td></tr>`).join(''); empty.hidden=rows.length>0;}
+function render(){const term=q('#search').value.toLowerCase(),st=q('#status-filter').value,dt=q('#date-filter').value; const rows=requests.filter(r=>(!st||r.status===st)&&(!dt||r.visit_date===dt)&&(!term||JSON.stringify(r).toLowerCase().includes(term))); tbody.innerHTML=rows.map(r=>`<tr data-id="${r.id}"><td><strong>${escapeHtml(r.request_code)}</strong></td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.project_name)}<small>${escapeHtml(r.room)}</small></td><td>
+  ${escapeHtml(formatDate(r.visit_date))}
+  ${
+    r.visit_end_date &&
+    r.visit_end_date !== r.visit_date
+      ? ` - ${escapeHtml(formatDate(r.visit_end_date))}`
+      : ""
+  }
+</td><td>${(r.attendees||[]).length}</td><td>${badge(r.status)}</td><td><button class="mini-button view">ตรวจสอบ</button></td></tr>`).join(''); empty.hidden=rows.length>0;}
 function timeValue(value){return value?escapeHtml(String(value).slice(0,5)):'-'}
 function open(r){
   selected=r;
@@ -94,7 +102,18 @@ const actions = `
     ${approvalButtons}
   </div>
 `;
-  content.innerHTML=`<div class="detail-header"><div><p class="eyebrow">${escapeHtml(r.request_code)}</p><h2>${escapeHtml(r.project_name)}</h2></div><button id="close-detail" class="icon-button">×</button></div><div class="detail-meta"><div><span>Location</span><strong>${escapeHtml(r.location)}</strong></div><div><span>Date</span><strong>${escapeHtml(formatDate(r.visit_date))}</strong></div><div><span>Room</span><strong>${escapeHtml(r.room)}</strong></div><div><span>Objective</span><strong>${escapeHtml(r.objective)}</strong></div><div><span>ผู้ประสานงาน</span><strong>${escapeHtml(r.host_name||'-')} ${escapeHtml(r.host_phone||'')}</strong></div><div><span>Status</span><strong>${badge(r.status)}</strong></div></div><div class="table-wrap"><table><thead><tr><th>No.</th>
+  content.innerHTML=`<div class="detail-header"><div><p class="eyebrow">${escapeHtml(r.request_code)}</p><h2>${escapeHtml(r.project_name)}</h2></div><button id="close-detail" class="icon-button">×</button></div><div class="detail-meta"><div><span>Location</span><strong>${escapeHtml(r.location)}</strong></div><div>
+  <span>Work Date</span>
+  <strong>
+    ${escapeHtml(formatDate(r.visit_date))}
+    ${
+      r.visit_end_date &&
+      r.visit_end_date !== r.visit_date
+        ? ` - ${escapeHtml(formatDate(r.visit_end_date))}`
+        : ""
+    }
+  </strong>
+</div><div><span>Room</span><strong>${escapeHtml(r.room)}</strong></div><div><span>Objective</span><strong>${escapeHtml(r.objective)}</strong></div><div><span>ผู้ประสานงาน</span><strong>${escapeHtml(r.host_name||'-')} ${escapeHtml(r.host_phone||'')}</strong></div><div><span>Status</span><strong>${badge(r.status)}</strong></div></div><div class="table-wrap"><table><thead><tr><th>No.</th>
 <th>Name</th>
 <th>Company</th>
 <th>Type</th>
