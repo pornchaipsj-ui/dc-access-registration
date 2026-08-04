@@ -313,3 +313,85 @@ tbody tr:hover { background: #f7fafc; }
     grid-column: span 1;
   }
 }
+/* Final registration form alignment */
+.access-info-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+  align-items: start !important;
+}
+
+/* แถวที่ 1: Location | Start | End | Project */
+.access-info-grid > :nth-child(1),
+.access-info-grid > :nth-child(2),
+.access-info-grid > :nth-child(3),
+.access-info-grid > :nth-child(4) {
+  grid-column: span 1 !important;
+}
+
+/* แถวที่ 2: Room ครึ่งแถว | Objective ครึ่งแถว */
+.access-info-grid > :nth-child(5),
+.access-info-grid > :nth-child(6) {
+  grid-column: span 2 !important;
+}
+
+/* แถวที่ 3: ชื่อผู้ประสานงาน | เบอร์ผู้ประสานงาน */
+.access-info-grid > :nth-child(7),
+.access-info-grid > :nth-child(8) {
+  grid-column: span 2 !important;
+}
+
+/* Request by และหมายเหตุเต็มแถว */
+.access-info-grid > .requester-group,
+.access-info-grid > .span-4 {
+  grid-column: 1 / -1 !important;
+}
+
+.requester-inputs {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.access-info-grid input,
+.access-info-grid select,
+.access-info-grid textarea {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .access-info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .access-info-grid > :nth-child(1),
+  .access-info-grid > :nth-child(2),
+  .access-info-grid > :nth-child(3),
+  .access-info-grid > :nth-child(4),
+  .access-info-grid > :nth-child(5),
+  .access-info-grid > :nth-child(6),
+  .access-info-grid > :nth-child(7),
+  .access-info-grid > :nth-child(8) {
+    grid-column: span 1 !important;
+  }
+
+  .access-info-grid > .requester-group,
+  .access-info-grid > .span-4 {
+    grid-column: 1 / -1 !important;
+  }
+
+  .requester-inputs {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .access-info-grid,
+  .requester-inputs {
+    grid-template-columns: 1fr !important;
+  }
+
+  .access-info-grid > * {
+    grid-column: 1 / -1 !important;
+  }
+}
