@@ -113,7 +113,7 @@ const actions = `
         : ""
     }
   </strong>
-</div><div><span>Room</span><strong>${escapeHtml(r.room)}</strong></div><div><span>Objective</span><strong>${escapeHtml(r.objective)}</strong></div><div><span>ผู้ประสานงาน</span><strong>${escapeHtml(r.host_name||'-')} ${escapeHtml(r.host_phone||'')}</strong></div><div><span>Status</span><strong>${badge(r.status)}</strong></div></div><div class="table-wrap"><table><thead><tr><th>No.</th>
+</div><div><span>Room</span><strong>${escapeHtml(r.room)}</strong></div><div><span>Objective</span><strong>${escapeHtml(r.objective)}</strong></div><div>   <span>ผู้ประสานงานภายใน</span>   <strong>     ${escapeHtml(r.host_name || "-")}   </strong>   <small>     ${escapeHtml(r.host_phone || "-")}   </small> </div>  <div>   <span>Request by</span>   <strong>     ${escapeHtml(r.requester_name || "-")}   </strong>   <small>     ${escapeHtml(r.requester_company || "-")}   </small> </div>  <div>   <span>Requester Contact</span>   <strong>     ${escapeHtml(r.requester_phone || "-")}   </strong>   <small>     ${escapeHtml(r.requester_email || "-")}   </small> </div>  <div>   <span>Status</span>   <strong>${badge(r.status)}</strong> </div></div><div class="table-wrap"><table><thead><tr><th>No.</th>
 <th>Name</th>
 <th>Company</th>
 <th>Type</th>
