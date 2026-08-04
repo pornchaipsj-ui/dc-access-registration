@@ -438,3 +438,29 @@ tbody tr:hover { background: #f7fafc; }
   color: #b42318;
   font-weight: 800;
 }
+/* Keep first-row labels and inputs aligned */
+.field-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 20px;
+  color: #243b53 !important;
+  font-weight: 700;
+}
+
+.required-mark {
+  color: #b42318;
+  font-weight: 800;
+}
+
+.access-info-grid > label:nth-child(-n + 4) {
+  display: grid;
+  grid-template-rows: 20px 43px 18px;
+  gap: 6px;
+  align-content: start;
+}
+
+.access-info-grid > label:nth-child(-n + 4) input,
+.access-info-grid > label:nth-child(-n + 4) select {
+  margin: 0;
+}
