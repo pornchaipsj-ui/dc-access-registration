@@ -3,7 +3,15 @@ const {demoMode,getClient,readDemoRequests,updateDemoRequest,escapeHtml,formatDa
 const login=q('#login-panel'),dash=q('#dashboard'),tbody=q('#request-table-body'),empty=q('#empty-state'),detail=q('#detail-panel'),content=q('#detail-content');
 function badge(s){return `<span class="status status--${s}">${({approved:'อนุมัติแล้ว',completed:'เสร็จสิ้น'})[s]||s}</span>`}
 async function load(){if(demoMode)requests=readDemoRequests();else{const r=await client.from('access_requests').select('*, attendees(*)').in('status',['approved','completed']).order('visit_date');if(r.error)throw r.error;requests=r.data||[]}render()}
-function render(){const term=q('#search').value.toLowerCase(),dt=q('#date-filter').value,st=q('#status-filter').value;const rows=requests.filter(r=>(!st||r.status===st)&&(!dt||r.visit_date===dt)&&(!term||JSON.stringify(r).toLowerCase().includes(term)));tbody.innerHTML=rows.map(r=>`<tr data-id="${r.id}"><td><strong>${escapeHtml(r.request_code)}</strong></td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.project_name)}<small>${escapeHtml(r.room)}</small></td><td>${escapeHtml(formatDate(r.visit_date))}</td><td>${(r.attendees||[]).length}</td><td>${badge(r.status)}</td><td><button class="mini-button">บันทึกเวลา</button></td></tr>`).join('');empty.hidden=rows.length>0}
+function render(){const term=q('#search').value.toLowerCase(),dt=q('#date-filter').value,st=q('#status-filter').value;const rows=requests.filter(r=>(!st||r.status===st)&&(!dt||r.visit_date===dt)&&(!term||JSON.stringify(r).toLowerCase().includes(term)));tbody.innerHTML=rows.map(r=>`<tr data-id="${r.id}"><td><strong>${escapeHtml(r.request_code)}</strong></td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.project_name)}<small>${escapeHtml(r.room)}</small></td><td>
+  ${escapeHtml(formatDate(r.visit_date))}
+  ${
+    r.visit_end_date &&
+    r.visit_end_date !== r.visit_date
+      ? ` - ${escapeHtml(formatDate(r.visit_end_date))}`
+      : ""
+  }
+</td><td>${(r.attendees||[]).length}</td><td>${badge(r.status)}</td><td><button class="mini-button">บันทึกเวลา</button></td></tr>`).join('');empty.hidden=rows.length>0}
 const timeEditor=(cls,val)=>`<div class="time-editor"><input class="table-input ${cls}" type="time" value="${escapeHtml(formatTime(val))}"><button type="button" class="mini-button time-now" data-target="${cls}">ตอนนี้</button></div>`;
 function open(r) {
   selected = r;
@@ -40,7 +48,7 @@ function open(r) {
       <td>${timeEditor("card-exchange", p.card_exchange_time)}</td>
       <td>${timeEditor("card-return", p.card_return_time)}</td>
     </tr>
-  `).join("");content.innerHTML=`<div class="detail-header"><div><p class="eyebrow">${escapeHtml(r.request_code)}</p><h2>${escapeHtml(r.project_name)}</h2></div><button id="close-detail" class="icon-button">×</button></div><div class="detail-meta"><div><span>Location</span><strong>${escapeHtml(r.location)}</strong></div><div><span>Date</span><strong>${escapeHtml(formatDate(r.visit_date))}</strong></div><div><span>Room</span><strong>${escapeHtml(r.room)}</strong></div><div><span>Objective</span><strong>${escapeHtml(r.objective)}</strong></div></div><div class="security-instruction"><strong>ลำดับการบันทึก:</strong> Card No. → เวลาเข้า → เวลาออก → เวลาแลกบัตร → เวลาคืนบัตร</div><div class="table-wrap table-wrap--detail"><table class="security-table"><thead><tr><th>No.</th>
+  `).join("");content.innerHTML=`<div class="detail-header"><div><p class="eyebrow">${escapeHtml(r.request_code)}</p><h2>${escapeHtml(r.project_name)}</h2></div><button id="close-detail" class="icon-button">×</button></div><div class="detail-meta"><div><span>Location</span><strong>${escapeHtml(r.location)}</strong></div><div><span>Work Date</span><strong>${escapeHtml(formatDate(r.visit_date))}${r.visit_end_date && r.visit_end_date !== r.visit_date ? ` - ${escapeHtml(formatDate(r.visit_end_date))}` : ""}</strong></div><div><span>Room</span><strong>${escapeHtml(r.room)}</strong></div><div><span>Objective</span><strong>${escapeHtml(r.objective)}</strong></div></div><div class="security-instruction"><strong>ลำดับการบันทึก:</strong> Card No. → เวลาเข้า → เวลาออก → เวลาแลกบัตร → เวลาคืนบัตร</div><div class="table-wrap table-wrap--detail"><table class="security-table"><thead><tr><th>No.</th>
 <th>Name / Company</th><th>Card Type</th><th>ID / Passport</th><th>Card No.</th>
 <th>เวลาเข้า</th>
 <th>เวลาออก</th>
