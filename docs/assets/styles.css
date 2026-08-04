@@ -395,3 +395,12 @@ tbody tr:hover { background: #f7fafc; }
     grid-column: 1 / -1 !important;
   }
 }
+.field-label {
+  display: block;
+  color: #243b53 !important;
+}
+
+.required-mark {
+  color: #b42318;
+  font-weight: 800;
+}
