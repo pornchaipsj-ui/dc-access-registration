@@ -26,8 +26,6 @@
   const attendeeCount = document.querySelector("#attendee-count");
   const visitDateInput = document.querySelector("#visit-date");
   const visitEndDateInput = document.querySelector("#visit-end-date");
-  const visitEndDateInput =
-  document.querySelector("#visit-end-date");
   const maxAttendees = Number(config.MAX_ATTENDEES || 25);
   const maxFileSize = Number(config.MAX_FILE_SIZE_MB || 5) * 1024 * 1024;
 
