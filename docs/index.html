@@ -61,9 +61,85 @@
           <label>Project Name <span>*</span><input id="project-name" maxlength="160" required placeholder="เช่น Customer Project"></label>
           <label>Room / พื้นที่ <span>*</span><input id="room" maxlength="100" required placeholder="เช่น DH01, SCR1"></label>
           <label class="span-2">Objective / วัตถุประสงค์ <span>*</span><input id="objective" maxlength="240" required placeholder="เช่น Install server"></label>
-          <label>ผู้ประสานงานภายใน<input id="host-name" maxlength="160" placeholder="ชื่อ-นามสกุล"></label>
-          <label>เบอร์ผู้ประสานงาน<input id="host-phone" inputmode="tel" maxlength="20" placeholder="08x-xxx-xxxx"></label>
-          <label class="span-4">หมายเหตุ<textarea id="notes" maxlength="1000" placeholder="รายละเอียดเพิ่มเติม / อุปกรณ์ที่นำเข้า / ข้อควรระวัง"></textarea></label>
+          <label>
+  ผู้ประสานงานภายใน
+  <input
+    id="host-name"
+    maxlength="160"
+    placeholder="ชื่อ-นามสกุล"
+  >
+</label>
+
+<label>
+  เบอร์ผู้ประสานงาน
+  <input
+    id="host-phone"
+    inputmode="tel"
+    maxlength="20"
+    placeholder="08x-xxx-xxxx"
+  >
+</label>
+
+<div class="requester-group">
+  <div class="requester-heading">
+    <strong>Request by / ผู้ยื่นคำขอ</strong>
+    <small>ข้อมูลสำหรับติดต่อกลับเกี่ยวกับคำขอนี้</small>
+  </div>
+
+  <div class="requester-inputs">
+    <label>
+      Name / ชื่อผู้ยื่นคำขอ <span>*</span>
+      <input
+        id="requester-name"
+        maxlength="160"
+        required
+        placeholder="ชื่อ-นามสกุล"
+      >
+    </label>
+
+    <label>
+      Company / บริษัท <span>*</span>
+      <input
+        id="requester-company"
+        maxlength="160"
+        required
+        placeholder="ชื่อบริษัท"
+      >
+    </label>
+
+    <label>
+      E-mail <span>*</span>
+      <input
+        id="requester-email"
+        type="email"
+        maxlength="200"
+        required
+        placeholder="name@company.com"
+      >
+    </label>
+
+    <label>
+      Tel. / เบอร์โทรศัพท์ <span>*</span>
+      <input
+        id="requester-phone"
+        type="tel"
+        inputmode="tel"
+        maxlength="30"
+        required
+        placeholder="08x-xxx-xxxx"
+      >
+    </label>
+  </div>
+</div>
+
+<label class="span-4">
+  หมายเหตุ
+  <textarea
+    id="notes"
+    maxlength="1000"
+    placeholder="รายละเอียดเพิ่มเติม / อุปกรณ์ที่นำเข้า / ข้อควรระวัง"
+  ></textarea>
+</label>
         </div>
       </section>
 
