@@ -41,7 +41,23 @@
               <option>TT1</option><option>TT2</option><option>MTG</option><option>BNA</option><option>RYG</option>
             </select>
           </label>
-          <label>วันที่เข้าพื้นที่ตามแผน <span>*</span><input id="visit-date" type="date" required></label>
+         <label>
+  วันที่เริ่มงาน
+  <input
+    id="visit-date"
+    type="date"
+    required
+  >
+</label>
+          <label>
+  วันที่สิ้นสุดงาน
+  <input
+    id="visit-end-date"
+    type="date"
+    required
+  >
+  <small>ระยะเวลาทำงานรวมไม่เกิน 7 วัน</small>
+</label>
           <label>Project Name <span>*</span><input id="project-name" maxlength="160" required placeholder="เช่น Customer Project"></label>
           <label>Room / พื้นที่ <span>*</span><input id="room" maxlength="100" required placeholder="เช่น DH01, SCR1"></label>
           <label class="span-2">Objective / วัตถุประสงค์ <span>*</span><input id="objective" maxlength="240" required placeholder="เช่น Install server"></label>
