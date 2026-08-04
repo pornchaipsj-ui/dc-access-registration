@@ -404,3 +404,37 @@ tbody tr:hover { background: #f7fafc; }
   color: #b42318;
   font-weight: 800;
 }
+/* Align first row fields */
+.access-info-grid > label {
+  align-self: start;
+}
+
+.access-info-grid > label > input,
+.access-info-grid > label > select {
+  margin-top: 0;
+}
+
+.access-info-grid > label > small {
+  min-height: 18px;
+  display: block;
+}
+
+/* Reserve equal helper-text space for first row */
+.access-info-grid > :nth-child(1)::after,
+.access-info-grid > :nth-child(2)::after,
+.access-info-grid > :nth-child(4)::after {
+  content: "";
+  display: block;
+  min-height: 18px;
+}
+
+/* Keep required mark same style as other fields */
+.field-label {
+  color: #243b53 !important;
+  font-weight: 700;
+}
+
+.required-mark {
+  color: #b42318;
+  font-weight: 800;
+}
