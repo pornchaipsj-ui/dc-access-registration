@@ -28,15 +28,19 @@ function open(r) {
       <td>${escapeHtml(p.card_type || "-")}</td>
 
       <td>
-        ${escapeHtml(
-          p.identity_masked ||
-          p.identity_last4 ||
-          "-"
-        )}
-      </td>
+  ${escapeHtml(
+    p.identity_masked ||
+    p.identity_last4 ||
+    "-"
+  )}
+</td>
 
-      <td>
-        <input
+<td>
+  ${escapeHtml(p.car_license || "-")}
+</td>
+
+<td>
+  <input
           class="table-input tidc-card"
           value="${escapeHtml(p.tidc_card_no || "")}"
           placeholder="Card no."
@@ -49,7 +53,7 @@ function open(r) {
       <td>${timeEditor("card-return", p.card_return_time)}</td>
     </tr>
   `).join("");content.innerHTML=`<div class="detail-header"><div><p class="eyebrow">${escapeHtml(r.request_code)}</p><h2>${escapeHtml(r.project_name)}</h2></div><button id="close-detail" class="icon-button">×</button></div><div class="detail-meta"><div><span>Location</span><strong>${escapeHtml(r.location)}</strong></div><div><span>Work Date</span><strong>${escapeHtml(formatDate(r.visit_date))}${r.visit_end_date && r.visit_end_date !== r.visit_date ? ` - ${escapeHtml(formatDate(r.visit_end_date))}` : ""}</strong></div><div><span>Room</span><strong>${escapeHtml(r.room)}</strong></div><div><span>Objective</span><strong>${escapeHtml(r.objective)}</strong></div></div><div class="security-instruction"><strong>ลำดับการบันทึก:</strong> Card No. → เวลาเข้า → เวลาออก → เวลาแลกบัตร → เวลาคืนบัตร</div><div class="table-wrap table-wrap--detail"><table class="security-table"><thead><tr><th>No.</th>
-<th>Name / Company</th><th>Card Type</th><th>ID / Passport</th><th>Card No.</th>
+<th>Name / Company</th><th>Card Type</th><th>ID / Passport</th><th>ทะเบียนรถ</th><th>Card No.</th>
 <th>เวลาเข้า</th>
 <th>เวลาออก</th>
 <th>เวลาแลกบัตร</th>
