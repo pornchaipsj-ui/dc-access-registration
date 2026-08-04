@@ -314,6 +314,12 @@ try {
     project_name: value("#project-name"),
     objective: value("#objective"),
     room: value("#room"),
+    
+    requester_name: value("#requester-name"),
+    requester_email: value("#requester-email"),
+    requester_phone: value("#requester-phone"),
+    requester_company: value("#requester-company"),
+    
     host_name: value("#host-name") || null,
     host_phone: value("#host-phone") || null,
     notes: value("#notes") || null,
