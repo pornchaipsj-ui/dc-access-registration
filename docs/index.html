@@ -35,8 +35,12 @@
           <div><h2>1. ข้อมูลการเข้าพื้นที่</h2><p>ไม่มีช่องเวลาเข้า–ออก ผู้ยื่นคำขอระบุเฉพาะวันที่ตามแผน</p></div>
         </div>
         <div class="form-grid access-info-grid">
-          <label>Location / สถานที่ <span>*</span>
-            <select id="location" required>
+          <label>
+  <span class="field-label">
+    Location / สถานที่ <b class="required-mark">*</b>
+  </span>
+
+  <select id="location" required>
               <option value="">เลือกสถานที่</option>
               <option>TT1</option><option>TT2</option><option>MTG</option><option>BNA</option><option>RYG</option>
             </select>
@@ -66,7 +70,13 @@
 
   <small>ระยะเวลาทำงานรวมไม่เกิน 7 วัน</small>
 </label>
-          <label>Project Name <span>*</span><input id="project-name" maxlength="160" required placeholder="เช่น Customer Project"></label>
+          <label>
+  <span class="field-label">
+    Project Name <b class="required-mark">*</b>
+  </span>
+
+  <input
+    id="project-name" maxlength="160" required placeholder="เช่น Customer Project"></label>
           <label>Room / พื้นที่ <span>*</span><input id="room" maxlength="100" required placeholder="เช่น DH01, SCR1"></label>
           <label class="span-2">Objective / วัตถุประสงค์ <span>*</span><input id="objective" maxlength="240" required placeholder="เช่น Install server"></label>
           <label>
