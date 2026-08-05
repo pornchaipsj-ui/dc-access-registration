@@ -3,7 +3,35 @@ const {demoMode,getClient,readDemoRequests,updateDemoRequest,escapeHtml,formatDa
 const login=q('#login-panel'),dash=q('#dashboard'),tbody=q('#request-table-body'),empty=q('#empty-state'),detail=q('#detail-panel'),content=q('#detail-content');
 function badge(s) {   return `     <span class="status status--${s}">       ${s === "approved" ? "อนุมัติแล้ว" : s}     </span>   `; }
 async function load(){if(demoMode)requests=readDemoRequests();else{const r=await client.from('access_requests').select('*, attendees(*)').eq('status', 'approved').order('visit_date');if(r.error)throw r.error;requests=r.data||[]}render()}
-function render(){const term=q('#search').value.toLowerCase(),dt=q('#date-filter').value,st=q('#status-filter').value;const rows=requests.filter(r=>(!st||r.status===st)&&(!dt||r.visit_date===dt)&&(!term||JSON.stringify(r).toLowerCase().includes(term)));tbody.innerHTML=rows.map(r=>`<tr data-id="${r.id}"><td><strong>${escapeHtml(r.request_code)}</strong></td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.project_name)}<small>${escapeHtml(r.room)}</small></td><td>
+
+   function renderSummary(filteredRequests) {
+  const attendees = filteredRequests.flatMap(
+    (request) => request.attendees || []
+  );
+
+  const total = attendees.length;
+
+  const exchanged = attendees.filter(
+    (person) => Boolean(person.card_exchange_time)
+  ).length;
+
+  const inside = attendees.filter(
+    (person) =>
+      Boolean(person.card_exchange_time) &&
+      !person.card_return_time
+  ).length;
+
+  const exited = attendees.filter(
+    (person) => Boolean(person.card_return_time)
+  ).length;
+
+  q("#summary-total").textContent = total;
+  q("#summary-exchanged").textContent = exchanged;
+  q("#summary-inside").textContent = inside;
+  q("#summary-exited").textContent = exited;
+}     
+        
+        function render(){const term=q('#search').value.toLowerCase(),dt=q('#date-filter').value,st=q('#status-filter').value;const rows=requests.filter(r=>(!st||r.status===st)&&(!dt||r.visit_date===dt)&&(!term||JSON.stringify(r).toLowerCase().includes(term)));renderSummary(rows);tbody.innerHTML=rows.map(r=>`<tr data-id="${r.id}"><td><strong>${escapeHtml(r.request_code)}</strong></td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.project_name)}<small>${escapeHtml(r.room)}</small></td><td>
   ${escapeHtml(formatDate(r.visit_date))}
   ${
     r.visit_end_date &&
