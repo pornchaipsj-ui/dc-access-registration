@@ -61,6 +61,179 @@ function open(r) {
 function clock(){return new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date())}
 function collect(){return [...content.querySelectorAll('tr[data-attendee-id]')].map(row=>{const entry=row.querySelector('.entry-time').value||null,exit=row.querySelector('.exit-time').value||null,exchange=row.querySelector('.card-exchange').value||null,returned=row.querySelector('.card-return').value||null;if(exit&&!entry)throw new Error('กรุณาระบุเวลาเข้าก่อนเวลาออก');if(returned&&!exchange)throw new Error('กรุณาระบุเวลาแลกบัตรก่อนเวลาคืนบัตร');return{id:row.dataset.attendeeId,tidc_card_no:row.querySelector('.tidc-card').value.trim()||null,card_exchange_time:exchange,entry_time:entry,exit_time:exit,card_return_time:returned}})}
 async function save(){const patches=collect();let u;if(demoMode){const m=new Map(patches.map(x=>[x.id,x]));u=updateDemoRequest(selected.id,{attendees:(selected.attendees||[]).map(p=>({...p,...m.get(p.id)}))})}else{for(const p of patches){const {id,...data}=p;const r=await client.from('attendees').update(data).eq('id',id);if(r.error)throw r.error}const r=await client.from('access_requests').select('*, attendees(*)').eq('id',selected.id).single();if(r.error)throw r.error;u=r.data}requests[requests.findIndex(x=>x.id===u.id)]=u;selected=u;open(u);render();alert('บันทึกเรียบร้อย')}
+function printDailySummary() {
+  const selectedDate = q("#date-filter").value;
 
-tbody.onclick=e=>{const tr=e.target.closest('tr[data-id]');if(tr)open(requests.find(x=>x.id===tr.dataset.id))};detail.onclick=e=>{if(e.target.id==='close-detail'||e.target===detail)detail.hidden=true;const n=e.target.closest('.time-now');if(n)n.closest('td').querySelector('.'+n.dataset.target).value=clock();if(e.target.id==='save')save().catch(x=>alert(x.message));if(e.target.id==='export-fr')window.AccessExports.exportFR037(selected);if(e.target.id==='print-fr')window.AccessExports.printFR037(selected)};['search','date-filter','status-filter'].forEach(id=>q('#'+id).addEventListener('input',render));q('#refresh-button').onclick=load;
+  if (!selectedDate) {
+    alert("กรุณาเลือกวันที่ก่อนพิมพ์สรุป");
+    return;
+  }
+
+  const dailyRequests = requests.filter((request) => {
+    return (
+      request.status === "approved" &&
+      request.visit_date <= selectedDate &&
+      (
+        !request.visit_end_date ||
+        request.visit_end_date >= selectedDate
+      )
+    );
+  });
+
+  if (!dailyRequests.length) {
+    alert("ไม่พบรายการในวันที่เลือก");
+    return;
+  }
+
+  const attendeeRows = dailyRequests
+    .flatMap((request) =>
+      (request.attendees || []).map((person, index) => `
+        <tr>
+          <td>${escapeHtml(request.request_code)}</td>
+
+          <td>${escapeHtml(request.location)}</td>
+
+          <td>
+            ${escapeHtml(request.project_name)}
+            <br>
+            <small>${escapeHtml(request.room || "-")}</small>
+          </td>
+
+          <td>${index + 1}</td>
+
+          <td>${escapeHtml(person.name || "-")}</td>
+
+          <td>${escapeHtml(person.company || "-")}</td>
+
+          <td>${escapeHtml(person.car_license || "-")}</td>
+
+          <td>${escapeHtml(person.tidc_card_no || "-")}</td>
+
+          <td>
+            ${escapeHtml(
+              formatTime(person.entry_time) || "-"
+            )}
+          </td>
+
+          <td>
+            ${escapeHtml(
+              formatTime(person.exit_time) || "-"
+            )}
+          </td>
+        </tr>
+      `)
+    )
+    .join("");
+
+  const totalPeople = dailyRequests.reduce(
+    (total, request) =>
+      total + (request.attendees || []).length,
+    0
+  );
+
+  const printWindow = window.open("", "_blank");
+
+  if (!printWindow) {
+    alert("กรุณาอนุญาต Pop-up เพื่อพิมพ์รายงาน");
+    return;
+  }
+
+  printWindow.document.write(`
+    <!doctype html>
+    <html lang="th">
+      <head>
+        <meta charset="utf-8">
+        <title>Daily Security Summary</title>
+
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            color: #102a43;
+          }
+
+          h1 {
+            margin: 0 0 6px;
+            font-size: 22px;
+          }
+
+          .summary {
+            margin-bottom: 16px;
+            color: #52606d;
+            font-size: 13px;
+          }
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+          }
+
+          th,
+          td {
+            border: 1px solid #94a3b8;
+            padding: 6px;
+            text-align: left;
+            vertical-align: top;
+          }
+
+          th {
+            background: #eaf0f6;
+          }
+
+          @page {
+            size: A4 landscape;
+            margin: 10mm;
+          }
+        </style>
+      </head>
+
+      <body>
+        <h1>สรุปรายการเข้า–ออกประจำวัน</h1>
+
+        <div class="summary">
+          วันที่:
+          ${escapeHtml(formatDate(selectedDate))}
+          |
+          จำนวนคำขอ:
+          ${dailyRequests.length}
+          |
+          จำนวนบุคคล:
+          ${totalPeople}
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Request</th>
+              <th>Location</th>
+              <th>Project / Room</th>
+              <th>No.</th>
+              <th>Name</th>
+              <th>Company</th>
+              <th>Car</th>
+              <th>Card No.</th>
+              <th>Entry</th>
+              <th>Exit</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${attendeeRows}
+          </tbody>
+        </table>
+
+        <script>
+          window.onload = function () {
+            window.print();
+          };
+        <\/script>
+      </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+}
+tbody.onclick=e=>{const tr=e.target.closest('tr[data-id]');if(tr)open(requests.find(x=>x.id===tr.dataset.id))};detail.onclick=e=>{if(e.target.id==='close-detail'||e.target===detail)detail.hidden=true;const n=e.target.closest('.time-now');if(n)n.closest('td').querySelector('.'+n.dataset.target).value=clock();if(e.target.id==='save')save().catch(x=>alert(x.message));if(e.target.id==='export-fr')window.AccessExports.exportFR037(selected);if(e.target.id==='print-fr')window.AccessExports.printFR037(selected)};['search','date-filter','status-filter'].forEach(id=>q('#'+id).addEventListener('input',render));q("#print-daily-button").onclick =
+  printDailySummary;q('#refresh-button').onclick=load;
 function show(){login.hidden=true;dash.hidden=false;load().catch(e=>alert(e.message))}async function init(){if(demoMode){q('#mode-banner').hidden=false;q('#mode-banner').innerHTML='<strong>Demo mode:</strong> เห็นข้อมูลเฉพาะเบราว์เซอร์เครื่องเดียว';q('#logout-button').hidden=true;show()}else{client=await getClient();const {data}=await client.auth.getSession();data.session?show():login.hidden=false}}q('#login-form').onsubmit=async e=>{e.preventDefault();client=client||await getClient();const {error}=await client.auth.signInWithPassword({email:q('#admin-email').value,password:q('#admin-password').value});if(error){q('#login-error').textContent=error.message;q('#login-error').hidden=false}else show()};q('#logout-button').onclick=async()=>{await client.auth.signOut();location.reload()};init();})();
