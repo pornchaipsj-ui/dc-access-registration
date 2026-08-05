@@ -22,8 +22,8 @@
     <section class="hero">
       <div>
         <p class="eyebrow">Access Request</p>
-        <h1>อัปโหลด StaffTemplate</h1>
-        <p>กรอกข้อมูลส่วนกลางแล้วอัปโหลดไฟล์ StaffTemplate ระบบจะตรวจสอบรายชื่อและนำข้อมูลไปสร้าง FR-037 ให้อัตโนมัติ โดยเวลาเข้า–ออกและเลขบัตร TIDC ให้ รปภ. บันทึกภายหลัง</p>
+        <h1>ลงทะเบียนเข้าพื้นที่ / Access Registration</h1>
+        <p>   กรุณากรอกข้อมูลการเข้าพื้นที่และอัปโหลด StaffTemplate   ระบบจะตรวจสอบรายชื่อและสร้างคำขอให้อัตโนมัติ   / Please complete the access information and upload the StaffTemplate.   The system will validate the attendee list and create the request automatically. </p>
       </div>
     </section>
 
@@ -32,7 +32,7 @@
     <form id="access-form">
       <section class="panel">
         <div class="panel__header">
-          <div><h2>1. ข้อมูลการเข้าพื้นที่</h2><p>ไม่มีช่องเวลาเข้า–ออก ผู้ยื่นคำขอระบุเฉพาะวันที่ตามแผน</p></div>
+          <div><h2>1. ข้อมูลการเข้าพื้นที่ / Access Information</h2><p>   ระบุวันที่ตามแผน โดยไม่ต้องระบุเวลาเข้า–ออก   / Enter the planned work dates. Entry and exit times are not required. </p></div>
         </div>
         <div class="form-grid access-info-grid">
           <label>
@@ -47,7 +47,7 @@
           </label>
         <label>
   <span class="field-label">
-    วันที่เริ่มงาน <b class="required-mark">*</b>
+    Start Date / วันที่เริ่มงาน <b class="required-mark">*</b>
   </span>
 
   <input
@@ -59,7 +59,7 @@
 
 <label>
   <span class="field-label">
-    วันที่สิ้นสุดงาน <b class="required-mark">*</b>
+    End Date / วันที่สิ้นสุดงาน <b class="required-mark">*</b>
   </span>
 
   <input
@@ -68,11 +68,11 @@
     required
   >
 
-  <small>ระยะเวลาทำงานรวมไม่เกิน 7 วัน</small>
+  <small>Maximum 7 days / ระยะเวลาทำงานรวมไม่เกิน 7 วัน</small>
 </label>
           <label>
   <span class="field-label">
-    Project Name <b class="required-mark">*</b>
+    Project Name / ชื่อโครงการ <b class="required-mark">*</b>
   </span>
 
   <input
@@ -80,7 +80,7 @@
           <label>Room / พื้นที่ <span>*</span><input id="room" maxlength="100" required placeholder="เช่น DH01, SCR1"></label>
           <label class="span-2">Objective / วัตถุประสงค์ <span>*</span><input id="objective" maxlength="240" required placeholder="เช่น Install server"></label>
           <label>
-  ผู้ประสานงานภายใน
+  Internal Coordinator / ผู้ประสานงานภายใน
   <input
     id="host-name"
     maxlength="160"
@@ -89,7 +89,7 @@
 </label>
 
 <label>
-  เบอร์ผู้ประสานงาน
+  Coordinator Tel. / เบอร์ผู้ประสานงาน
   <input
     id="host-phone"
     inputmode="tel"
@@ -101,7 +101,7 @@
 <div class="requester-group">
   <div class="requester-heading">
     <strong>Request by / ผู้ยื่นคำขอ</strong>
-    <small>ข้อมูลสำหรับติดต่อกลับเกี่ยวกับคำขอนี้</small>
+    <small>   Contact information for this request   / ข้อมูลสำหรับติดต่อกลับเกี่ยวกับคำขอนี้ </small>
   </div>
 
   <div class="requester-inputs">
@@ -111,7 +111,7 @@
         id="requester-name"
         maxlength="160"
         required
-        placeholder="ชื่อ-นามสกุล"
+        placeholder="Full name / ชื่อ-นามสกุล"
       >
     </label>
 
@@ -121,12 +121,12 @@
         id="requester-company"
         maxlength="160"
         required
-        placeholder="ชื่อบริษัท"
+        placeholder="Company name / ชื่อบริษัท"
       >
     </label>
 
     <label>
-      E-mail <span>*</span>
+      E-mail / อีเมล <span>*</span>
       <input
         id="requester-email"
         type="email"
@@ -151,7 +151,7 @@
 </div>
 
 <label class="span-4">
-  หมายเหตุ
+  Remarks / หมายเหตุ
   <textarea
     id="notes"
     maxlength="1000"
@@ -164,8 +164,8 @@
 <section class="panel">
   <div class="panel__header">
     <div>
-      <h2>2. Upload StaffTemplate</h2>
-      <p>รองรับไฟล์ .xlsx และสูงสุด 25 รายชื่อ ตามจำนวนแถวใน FR-037</p>
+      <h2>2. รายชื่อผู้เข้าพื้นที่ / Attendee List</h2>
+      <p>   รองรับไฟล์ .xlsx และสูงสุด 25 รายชื่อ   / Supports .xlsx files with a maximum of 25 attendees. </p>
     </div>
 
     <span id="attendee-count" class="badge">0/25</span>
@@ -174,23 +174,23 @@
         <label id="upload-zone" class="upload-zone" for="staff-file">
           <input id="staff-file" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
           <span class="upload-zone__icon">↑</span>
-          <strong>เลือกหรือวางไฟล์ StaffTemplate.xlsx</strong>
-          <small>ระบบอ่านข้อมูลจากชีต Data เท่านั้น และไม่เก็บไฟล์ต้นฉบับไว้ในฐานข้อมูล</small>
+          <strong>   Select or drop StaffTemplate.xlsx   / เลือกหรือลากไฟล์ StaffTemplate.xlsx มาวาง </strong>
+          <small>   The system reads data from the Data sheet only and does not retain the original file.   / ระบบอ่านข้อมูลจากชีต Data เท่านั้น และไม่เก็บไฟล์ต้นฉบับ </small>
         </label>
 
         <div class="upload-help">
           <div>
-            <strong>คอลัมน์ที่ต้องมี</strong>
+            <strong>Required Columns / คอลัมน์ที่ต้องมี</strong>
             <p>COMPANY, ATTENDEE TYPE, NAME, MOBILE, EMAIL, CARD TYPE, ID, CAR LICENSE</p>
           </div>
-          <a class="button button--secondary" href="./templates/StaffTemplate.xlsx" download>ดาวน์โหลด StaffTemplate เปล่า</a>
+          <a class="button button--secondary" href="./templates/StaffTemplate.xlsx" download>Download Blank StaffTemplate / ดาวน์โหลด StaffTemplate เปล่า</a>
         </div>
 
         <div id="file-status" class="file-status" hidden></div>
         <div id="file-errors" class="error-list" hidden></div>
 
         <div id="preview-section" hidden>
-          <div class="preview-heading"><h3>ตัวอย่างข้อมูลที่จะส่ง</h3><span id="source-file-name"></span></div>
+          <div class="preview-heading"><h3>Submission Preview / ตัวอย่างข้อมูลที่จะส่ง</h3><span id="source-file-name"></span></div>
           <div class="table-wrap table-wrap--preview">
             <table>
               <thead><tr><th>No.</th><th>Name</th><th>Type</th><th>Company</th><th>Mobile</th><th>Email</th><th>ID/Passport</th><th>Car</th></tr></thead>
@@ -199,19 +199,19 @@
           </div>
         </div>
 
-        <div class="privacy-note"><strong>การคุ้มครองข้อมูล:</strong> ระบบอ่านเลข ID / Passport ภายในเบราว์เซอร์ แล้วส่งขึ้นฐานข้อมูลเฉพาะ 4 ตัวท้ายและเลขแบบปกปิดเท่านั้น ไม่ส่งเลขเต็มและไม่เก็บไฟล์ต้นฉบับ</div>
+        <div class="privacy-note"><strong>Data Protection / การคุ้มครองข้อมูล:</strong> ระบบอ่านเลข ID / Passport ภายในเบราว์เซอร์ แล้วส่งขึ้นฐานข้อมูลเฉพาะ 4 ตัวท้ายและเลขแบบปกปิดเท่านั้น ไม่ส่งเลขเต็มและไม่เก็บไฟล์ต้นฉบับ</div>
       </section>
 
       <section class="panel">
-        <div class="panel__header"><div><h2>3. ยืนยันข้อมูล</h2><p>ตรวจสอบวันที่ สถานที่ และรายชื่อจากไฟล์ก่อนส่งคำขอ</p></div></div>
+        <div class="panel__header"><div><h2>3. ยืนยันข้อมูล / Confirmation</h2><p>   กรุณาตรวจสอบวันที่ สถานที่ และรายชื่อก่อนส่งคำขอ   / Please review the dates, location, and attendee list before submitting. </p></div></div>
         <div class="form-actions">
-          <label class="consent"><input type="checkbox" required><span>ข้าพเจ้ายืนยันว่าข้อมูลถูกต้อง และยินยอมให้ใช้ข้อมูลเพื่อการควบคุมการเข้า-ออกพื้นที่และการรักษาความปลอดภัย</span></label>
-          <button id="submit-button" class="button button--primary" type="submit">ส่ง StaffTemplate</button>
+          <label class="consent"><input type="checkbox" required><span>   ข้าพเจ้ายืนยันว่าข้อมูลถูกต้อง และยินยอมให้ใช้ข้อมูลเพื่อการควบคุมการเข้า–ออกพื้นที่และการรักษาความปลอดภัย   / I confirm that the information is correct and consent to its use for access control and security purposes. </span></label>
+          <button id="submit-button" class="button button--primary" type="submit">Submit Access Request / ส่งคำขอเข้าพื้นที่</button>
         </div>
       </section>
     </form>
   </main>
-  <footer class="site-footer">หลังได้รับอนุมัติ รปภ. จะบันทึกเวลาเข้า–ออก และเวลาแลก–คืนบัตร</footer>
+  <footer class="site-footer">After approval, Security will record the actual entry and exit times and card exchange details.  / หลังได้รับอนุมัติ รปภ. จะบันทึกเวลาเข้า–ออกจริง และเวลาแลก–คืนบัตร</footer>
   <script src="./assets/config.js" defer></script>
   <script src="./assets/common.js" defer></script>
   <script src="./assets/app.js?v=26" defer></script>
