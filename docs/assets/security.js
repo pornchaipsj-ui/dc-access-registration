@@ -65,7 +65,7 @@ function printDailySummary() {
   const selectedDate = q("#date-filter").value;
 
   if (!selectedDate) {
-    alert("กรุณาเลือกวันที่ก่อนพิมพ์สรุป");
+    alert("กรุณาเลือกวันที่ก่อนพิมพ์ FR-037");
     return;
   }
 
@@ -81,147 +81,398 @@ function printDailySummary() {
   });
 
   if (!dailyRequests.length) {
-    alert("ไม่พบรายการในวันที่เลือก");
+    alert("ไม่พบรายการที่อนุมัติในวันที่เลือก");
     return;
   }
 
-  const attendeeRows = dailyRequests
-    .flatMap((request) =>
-      (request.attendees || []).map((person, index) => `
-        <tr>
-          <td>${escapeHtml(request.request_code)}</td>
-
-          <td>${escapeHtml(request.location)}</td>
-
-          <td>
-            ${escapeHtml(request.project_name)}
-            <br>
-            <small>${escapeHtml(request.room || "-")}</small>
-          </td>
-
-          <td>${index + 1}</td>
-
-          <td>${escapeHtml(person.name || "-")}</td>
-
-          <td>${escapeHtml(person.company || "-")}</td>
-
-          <td>${escapeHtml(person.car_license || "-")}</td>
-
-          <td>${escapeHtml(person.tidc_card_no || "-")}</td>
-
-          <td>
-            ${escapeHtml(
-              formatTime(person.entry_time) || "-"
-            )}
-          </td>
-
-          <td>
-            ${escapeHtml(
-              formatTime(person.exit_time) || "-"
-            )}
-          </td>
-        </tr>
-      `)
-    )
-    .join("");
-
-  const totalPeople = dailyRequests.reduce(
-    (total, request) =>
-      total + (request.attendees || []).length,
-    0
+  const dailyAttendees = dailyRequests.flatMap(
+    (request) =>
+      (request.attendees || []).map((person) => ({
+        ...person,
+        request_code: request.request_code,
+        project_name: request.project_name,
+        objective: request.objective,
+        room: request.room,
+        location: request.location
+      }))
   );
 
-  const printWindow = window.open("", "_blank");
-
-  if (!printWindow) {
-    alert("กรุณาอนุญาต Pop-up เพื่อพิมพ์รายงาน");
+  if (!dailyAttendees.length) {
+    alert("ไม่พบรายชื่อผู้เข้าพื้นที่ในวันที่เลือก");
     return;
   }
 
-  printWindow.document.write(`
+  const pages = [];
+
+  for (
+    let index = 0;
+    index < dailyAttendees.length;
+    index += 25
+  ) {
+    pages.push(
+      dailyAttendees.slice(index, index + 25)
+    );
+  }
+
+  const locations = [
+    ...new Set(
+      dailyRequests
+        .map((request) => request.location)
+        .filter(Boolean)
+    )
+  ];
+
+  const locationCheckboxes = [
+    "TT1",
+    "TT2",
+    "MTG",
+    "BNA",
+    "RYG"
+  ].map((location) => `
+    <span>
+      ${locations.includes(location) ? "☒" : "☐"}
+      ${location}
+    </span>
+  `).join("");
+
+  const pageContents = pages.map(
+    (pageAttendees, pageIndex) => {
+      const rows = Array.from(
+        { length: 25 },
+        (_, rowIndex) => {
+          const person = pageAttendees[rowIndex];
+
+          return `
+            <tr>
+              <td>${rowIndex + 1}</td>
+
+              <td>
+                ${
+                  person
+                    ? escapeHtml(
+                        person.project_name || ""
+                      )
+                    : ""
+                }
+              </td>
+
+              <td>
+                ${
+                  person
+                    ? escapeHtml(person.name || "")
+                    : ""
+                }
+              </td>
+
+              <td>
+                ${
+                  person
+                    ? escapeHtml(
+                        person.identity_last4 || ""
+                      )
+                    : ""
+                }
+              </td>
+
+              <td>
+                ${
+                  person
+                    ? escapeHtml(person.mobile || "")
+                    : ""
+                }
+              </td>
+
+              <td>
+                ${
+                  person
+                    ? escapeHtml(person.email || "")
+                    : ""
+                }
+              </td>
+
+              <td>
+                ${
+                  person
+                    ? escapeHtml(
+                        window.AccessApp.attendeeTypeLabel(
+                          person.attendee_type
+                        )
+                      )
+                    : ""
+                }
+              </td>
+
+              <td>
+                ${
+                  person
+                    ? escapeHtml(person.company || "")
+                    : ""
+                }
+              </td>
+
+              <td>
+                ${
+                  person
+                    ? escapeHtml(
+                        person.tidc_card_no || ""
+                      )
+                    : ""
+                }
+              </td>
+
+              <td>
+                ${
+                  person
+                    ? escapeHtml(person.objective || "")
+                    : ""
+                }
+              </td>
+
+              <td>
+                ${
+                  person
+                    ? escapeHtml(person.room || "")
+                    : ""
+                }
+              </td>
+
+              <td>
+                ${
+                  person
+                    ? escapeHtml(
+                        formatTime(person.entry_time)
+                      )
+                    : ""
+                }
+              </td>
+
+              <td>
+                ${
+                  person
+                    ? escapeHtml(
+                        formatTime(person.exit_time)
+                      )
+                    : ""
+                }
+              </td>
+            </tr>
+          `;
+        }
+      ).join("");
+
+      return `
+        <section class="fr-page">
+          <h1>
+            แบบฟอร์มลงทะเบียนเข้า-ออก
+            ภายในศูนย์คอมพิวเตอร์
+          </h1>
+
+          <div class="meta">
+            <div class="locations">
+              Location:
+              ${locationCheckboxes}
+            </div>
+
+            <div>
+              วันที่ตามแผน:
+              ${escapeHtml(formatDate(selectedDate))}
+            </div>
+          </div>
+
+          <div class="page-info">
+            Daily Summary |
+            จำนวนบุคคลทั้งหมด:
+            ${dailyAttendees.length}
+            |
+            หน้า ${pageIndex + 1}/${pages.length}
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Project Name</th>
+                <th>Name</th>
+                <th>
+                  ID Card<br>
+                  Last 4
+                </th>
+                <th>Mobile No</th>
+                <th>Email</th>
+                <th>Type</th>
+                <th>Company Name</th>
+                <th>Card no. TIDC</th>
+                <th>Objective</th>
+                <th>Room</th>
+                <th>Date In</th>
+                <th>Date Out</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              ${rows}
+            </tbody>
+          </table>
+
+          <div class="note">
+            * กรุณาคัดลายมือตัวบรรจง
+            และกรอกข้อมูลให้ครบทุกช่อง
+            ขอบคุณครับ/ค่ะ *
+          </div>
+        </section>
+      `;
+    }
+  ).join("");
+
+  const popup = window.open("", "_blank");
+
+  if (!popup) {
+    alert("กรุณาอนุญาต Pop-up เพื่อพิมพ์ FR-037");
+    return;
+  }
+
+  popup.document.write(`
     <!doctype html>
     <html lang="th">
       <head>
         <meta charset="utf-8">
-        <title>Daily Security Summary</title>
+
+        <title>
+          FR-037 Daily ${escapeHtml(selectedDate)}
+        </title>
 
         <style>
+          @page {
+            size: A4 landscape;
+            margin: 8mm;
+          }
+
           body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            color: #102a43;
+            font-family:
+              Arial,
+              "Noto Sans Thai",
+              sans-serif;
+            margin: 0;
+            color: #111;
+          }
+
+          .fr-page {
+            page-break-after: always;
+          }
+
+          .fr-page:last-child {
+            page-break-after: auto;
           }
 
           h1 {
-            margin: 0 0 6px;
-            font-size: 22px;
+            text-align: center;
+            font-size: 20px;
+            margin: 0 0 9px;
           }
 
-          .summary {
-            margin-bottom: 16px;
-            color: #52606d;
-            font-size: 13px;
+          .meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            margin-bottom: 5px;
+          }
+
+          .locations {
+            font-weight: 700;
+          }
+
+          .locations span {
+            margin-left: 10px;
+          }
+
+          .page-info {
+            text-align: right;
+            font-size: 10px;
+            margin-bottom: 5px;
           }
 
           table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 11px;
+            table-layout: fixed;
+            font-size: 8px;
           }
 
           th,
           td {
-            border: 1px solid #94a3b8;
-            padding: 6px;
-            text-align: left;
-            vertical-align: top;
+            border: 1px solid #222;
+            padding: 3px 2px;
+            text-align: center;
+            vertical-align: middle;
+            word-break: break-word;
+            height: 18px;
           }
 
           th {
-            background: #eaf0f6;
+            background: #f7e4d5;
+            font-size: 8px;
           }
 
-          @page {
-            size: A4 landscape;
-            margin: 10mm;
+          th:nth-child(1) {
+            width: 3%;
+          }
+
+          th:nth-child(2) {
+            width: 8%;
+          }
+
+          th:nth-child(3) {
+            width: 18%;
+          }
+
+          th:nth-child(4) {
+            width: 8%;
+          }
+
+          th:nth-child(5) {
+            width: 8%;
+          }
+
+          th:nth-child(6) {
+            width: 15%;
+          }
+
+          th:nth-child(7) {
+            width: 7%;
+          }
+
+          th:nth-child(8) {
+            width: 8%;
+          }
+
+          th:nth-child(9) {
+            width: 7%;
+          }
+
+          th:nth-child(10) {
+            width: 8%;
+          }
+
+          th:nth-child(11) {
+            width: 5%;
+          }
+
+          th:nth-child(12),
+          th:nth-child(13) {
+            width: 5%;
+          }
+
+          .note {
+            font-size: 10px;
+            margin-top: 5px;
           }
         </style>
       </head>
 
       <body>
-        <h1>สรุปรายการเข้า–ออกประจำวัน</h1>
-
-        <div class="summary">
-          วันที่:
-          ${escapeHtml(formatDate(selectedDate))}
-          |
-          จำนวนคำขอ:
-          ${dailyRequests.length}
-          |
-          จำนวนบุคคล:
-          ${totalPeople}
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Request</th>
-              <th>Location</th>
-              <th>Project / Room</th>
-              <th>No.</th>
-              <th>Name</th>
-              <th>Company</th>
-              <th>Car</th>
-              <th>Card No.</th>
-              <th>Entry</th>
-              <th>Exit</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            ${attendeeRows}
-          </tbody>
-        </table>
+        ${pageContents}
 
         <script>
           window.onload = function () {
@@ -232,7 +483,7 @@ function printDailySummary() {
     </html>
   `);
 
-  printWindow.document.close();
+  popup.document.close();
 }
 tbody.onclick=e=>{const tr=e.target.closest('tr[data-id]');if(tr)open(requests.find(x=>x.id===tr.dataset.id))};detail.onclick=e=>{if(e.target.id==='close-detail'||e.target===detail)detail.hidden=true;const n=e.target.closest('.time-now');if(n)n.closest('td').querySelector('.'+n.dataset.target).value=clock();if(e.target.id==='save')save().catch(x=>alert(x.message));if(e.target.id==='export-fr')window.AccessExports.exportFR037(selected);if(e.target.id==='print-fr')window.AccessExports.printFR037(selected)};['search','date-filter','status-filter'].forEach(id=>q('#'+id).addEventListener('input',render));q("#print-daily-button").onclick =
   printDailySummary;q('#refresh-button').onclick=load;
