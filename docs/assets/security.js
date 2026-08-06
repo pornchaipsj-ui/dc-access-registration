@@ -31,7 +31,7 @@ async function load(){if(demoMode)requests=readDemoRequests();else{const r=await
   q("#summary-exited").textContent = exited;
 }     
         
-        function render(){const term=q('#search').value.toLowerCase(),dt=q('#date-filter').value,st=q('#status-filter').value;const rows=requests.filter(r=>(!st||r.status===st)&&(!dt||r.visit_date===dt)&&(!term||JSON.stringify(r).toLowerCase().includes(term)));renderSummary(rows);tbody.innerHTML=rows.map(r=>`<tr data-id="${r.id}"><td><strong>${escapeHtml(r.request_code)}</strong></td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.project_name)}<small>${escapeHtml(r.room)}</small></td><td>
+        function render(){const term=q('#search').value.toLowerCase(),dt=q('#date-filter').value,st=q('#status-filter').value;const rows=requests.filter(r=>(!st||r.status===st)&&(   !dt ||   (     r.visit_date <= dt &&     (       !r.visit_end_date ||       r.visit_end_date >= dt     )   ) )&&(!term||JSON.stringify(r).toLowerCase().includes(term)));renderSummary(rows);tbody.innerHTML=rows.map(r=>`<tr data-id="${r.id}"><td><strong>${escapeHtml(r.request_code)}</strong></td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.project_name)}<small>${escapeHtml(r.room)}</small></td><td>
   ${escapeHtml(formatDate(r.visit_date))}
   ${
     r.visit_end_date &&
