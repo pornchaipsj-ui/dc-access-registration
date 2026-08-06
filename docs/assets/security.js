@@ -603,6 +603,15 @@ function show(){login.hidden=true;dash.hidden=false;load().catch(e=>alert(e.mess
       );
     }
   }
-);async function init(){q("#date-filter").value =
-  q("#date-filter").value ||
-  new Date().toISOString().slice(0, 10);if(demoMode){q('#mode-banner').hidden=false;q('#mode-banner').innerHTML='<strong>Demo mode:</strong> เห็นข้อมูลเฉพาะเบราว์เซอร์เครื่องเดียว';q('#logout-button').hidden=true;show()}else{client=await getClient();const {data}=await client.auth.getSession();data.session?show():login.hidden=false}}q('#login-form').onsubmit=async e=>{e.preventDefault();client=client||await getClient();const {error}=await client.auth.signInWithPassword({email:q('#admin-email').value,password:q('#admin-password').value});if(error){q('#login-error').textContent=error.message;q('#login-error').hidden=false}else show()};q('#logout-button').onclick=async()=>{await client.auth.signOut();location.reload()};init();})();
+);async function init(){const thaiDate = new Intl.DateTimeFormat(
+  "en-CA",
+  {
+    timeZone: "Asia/Bangkok",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }
+).format(new Date());
+
+q("#date-filter").value =
+  q("#date-filter").value || thaiDate;if(demoMode){q('#mode-banner').hidden=false;q('#mode-banner').innerHTML='<strong>Demo mode:</strong> เห็นข้อมูลเฉพาะเบราว์เซอร์เครื่องเดียว';q('#logout-button').hidden=true;show()}else{client=await getClient();const {data}=await client.auth.getSession();data.session?show():login.hidden=false}}q('#login-form').onsubmit=async e=>{e.preventDefault();client=client||await getClient();const {error}=await client.auth.signInWithPassword({email:q('#admin-email').value,password:q('#admin-password').value});if(error){q('#login-error').textContent=error.message;q('#login-error').hidden=false}else show()};q('#logout-button').onclick=async()=>{await client.auth.signOut();location.reload()};init();})();
