@@ -216,8 +216,12 @@ const dailyAttendees = dailyRequests.flatMap(
         };
       })
       .filter((person) =>
-        Boolean(person.card_exchange_time)
-      )
+  Boolean(person.card_exchange_time)
+)
+.sort((a, b) =>
+  String(a.card_exchange_time || "")
+    .localeCompare(String(b.card_exchange_time || ""))
+)
 );
 
   if (!dailyAttendees.length) {
@@ -267,7 +271,7 @@ const dailyAttendees = dailyRequests.flatMap(
 
           return `
             <tr>
-              <td>${rowIndex + 1}</td>
+              <td>${pageIndex * 25 + rowIndex + 1}</td>
 
               <td>
                 ${
