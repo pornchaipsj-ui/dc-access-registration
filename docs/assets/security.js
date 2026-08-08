@@ -620,9 +620,40 @@ const dailyAttendees = dailyRequests
 
   popup.document.close();
 }
-tbody.onclick=e=>{const tr=e.target.closest('tr[data-id]');if(tr)open(requests.find(x=>x.id===tr.dataset.id))};detail.onclick=e=>{if(e.target.id==='close-detail'||e.target===detail)detail.hidden=true;const n=e.target.closest('.time-now');
-if(n)n.closest('td').querySelector('.'+n.dataset.target).value=clock();
-  printDailySummary;q('#refresh-button').onclick=load;
+tbody.onclick=e=>{
+  const tr=e.target.closest('tr[data-id]');
+  if(tr)open(requests.find(x=>x.id===tr.dataset.id));
+};
+
+detail.onclick=e=>{
+  if(e.target.id==='close-detail'||e.target===detail)
+    detail.hidden=true;
+
+  const n=e.target.closest('.time-now');
+
+  if(n)
+    n.closest('td')
+      .querySelector('.'+n.dataset.target)
+      .value=clock();
+
+  if(e.target.id==='save')
+    save().catch(x=>alert(x.message));
+
+  if(e.target.id==='export-fr')
+    window.AccessExports.exportFR037(selected);
+
+  if(e.target.id==='print-fr')
+    window.AccessExports.printFR037(selected);
+};
+
+['search','date-filter','status-filter'].forEach(id=>
+  q('#'+id).addEventListener('input',render)
+);
+
+q("#print-daily-button").onclick =
+  printDailySummary;
+
+q('#refresh-button').onclick=load;
 function show(){login.hidden=true;dash.hidden=false;load().catch(e=>alert(e.message))}q("#date-filter").addEventListener(
   "change",
   async () => {
