@@ -184,17 +184,38 @@ function printDailySummary() {
     return;
   }
 
-  const dailyAttendees = dailyRequests.flatMap(
-    (request) =>
-      (request.attendees || []).map((person) => ({
+const dailyAttendees = dailyRequests.flatMap(
+  (request) =>
+    (request.attendees || []).map((person) => {
+      const record =
+        dailyRecords.get(String(person.id)) || {};
+
+      return {
         ...person,
+
         request_code: request.request_code,
         project_name: request.project_name,
         objective: request.objective,
         room: request.room,
-        location: request.location
-      }))
-  );
+        location: request.location,
+
+        tidc_card_no:
+          record.tidc_card_no || "",
+
+        entry_time:
+          record.entry_time || null,
+
+        exit_time:
+          record.exit_time || null,
+
+        card_exchange_time:
+          record.card_exchange_time || null,
+
+        card_return_time:
+          record.card_return_time || null
+      };
+    })
+);
 
   if (!dailyAttendees.length) {
     alert("ไม่พบรายชื่อผู้เข้าพื้นที่ในวันที่เลือก");
