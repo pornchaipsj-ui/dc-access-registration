@@ -184,45 +184,50 @@ function printDailySummary() {
     return;
   }
 
-const dailyAttendees = dailyRequests.flatMap(
-  (request) =>
-    (request.attendees || [])
-      .map((person) => {
-        const record =
-          dailyRecords.get(String(person.id)) || {};
+const dailyAttendees = dailyRequests
+  .flatMap((request) =>
+    (request.attendees || []).map((person) => {
+      const record =
+        dailyRecords.get(String(person.id)) || {};
 
-        return {
-          ...person,
-          request_code: request.request_code,
-          project_name: request.project_name,
-          objective: request.objective,
-          room: request.room,
-          location: request.location,
+      return {
+        ...person,
+        request_code: request.request_code,
+        project_name: request.project_name,
+        objective: request.objective,
+        room: request.room,
+        location: request.location,
 
-          tidc_card_no:
-            record.tidc_card_no || "",
+        tidc_card_no:
+          record.tidc_card_no || "",
 
-          entry_time:
-            record.entry_time || null,
+        entry_time:
+          record.entry_time || null,
 
-          exit_time:
-            record.exit_time || null,
+        exit_time:
+          record.exit_time || null,
 
-          card_exchange_time:
-            record.card_exchange_time || null,
+        card_exchange_time:
+          record.card_exchange_time || null,
 
-          card_return_time:
-            record.card_return_time || null
-        };
-      })
-      .filter((person) =>
-  Boolean(person.card_exchange_time)
-)
-.sort((a, b) =>
-  String(a.card_exchange_time || "")
-    .localeCompare(String(b.card_exchange_time || ""))
-)
-);
+        card_return_time:
+          record.card_return_time || null
+      };
+    })
+  )
+
+  // เอาเฉพาะคนที่แลกบัตรจริง
+  .filter((person) =>
+    Boolean(person.card_exchange_time)
+  )
+
+  // เรียงเวลาทั้งหมดจากเร็วไปช้า
+  .sort((a, b) =>
+    String(a.card_exchange_time || "")
+      .localeCompare(
+        String(b.card_exchange_time || "")
+      )
+  );
 
   if (!dailyAttendees.length) {
     alert("ไม่พบรายชื่อผู้เข้าพื้นที่ในวันที่เลือก");
