@@ -70,7 +70,7 @@ const exchanged = attendees.filter((person) => {
       ? ` - ${escapeHtml(formatDate(r.visit_end_date))}`
       : ""
   }
-</td><td>${(r.attendees||[]).length}</td><td>${badge(r.status)}</td><td><button class="mini-button">บันทึกเวลา</button></td></tr>`).join('');empty.hidden=rows.length>0}
+</td><td>   ${     (r.attendees || []).filter((person) => {       const record =         dailyRecords.get(String(person.id));        return Boolean(record?.card_exchange_time);     }).length   }   /   ${(r.attendees || []).length} </td><td>${badge(r.status)}</td><td><button class="mini-button">บันทึกเวลา</button></td></tr>`).join('');empty.hidden=rows.length>0}
 const timeEditor=(cls,val)=>`<div class="time-editor"><input class="table-input ${cls}" type="time" value="${escapeHtml(formatTime(val))}"><button type="button" class="mini-button time-now" data-target="${cls}">ตอนนี้</button></div>`;
 function open(r) {
   selected = r;
