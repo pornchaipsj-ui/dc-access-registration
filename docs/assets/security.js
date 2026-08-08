@@ -122,166 +122,7 @@ function open(r) {
 function clock(){return new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date())}
 function collect(){return [...content.querySelectorAll('tr[data-attendee-id]')].map(row=>{const entry=row.querySelector('.entry-time').value||null,exit=row.querySelector('.exit-time').value||null,exchange=row.querySelector('.card-exchange').value||null,returned=row.querySelector('.card-return').value||null;if(exit&&!entry)throw new Error('กรุณาระบุเวลาเข้าก่อนเวลาออก');if(returned&&!exchange)throw new Error('กรุณาระบุเวลาแลกบัตรก่อนเวลาคืนบัตร');return{id:row.dataset.attendeeId,tidc_card_no:row.querySelector('.tidc-card').value.trim()||null,card_exchange_time:exchange,entry_time:entry,exit_time:exit,card_return_time:returned}})}
 
-async function syncAccessSessions(patches, selectedDate) {
-  for (const p of patches) {
-    const oldRecord =
-      dailyRecords.get(String(p.id)) || {};
 
-    // ยังไม่เคยแลกบัตร ไม่ต้องสร้าง Log
-    if (!p.card_exchange_time) {
-      continue;
-    }
-
-    const { data: sessions, error: loadError } =
-      await client
-        .from("attendee_access_sessions")
-        .select("*")
-        .eq("attendee_id", p.id)
-        .eq("record_date", selectedDate)
-        .order("session_no", {
-          ascending: false
-        });
-
-    if (loadError) {
-      throw loadError;
-    }
-
-    const latestSession =
-      sessions && sessions.length
-        ? sessions[0]
-        : null;
-
-    // ยังไม่มี Log ของวันนี้
-    if (!latestSession) {
-      const { error } = await client
-        .from("attendee_access_sessions")
-        .insert({
-          request_id: selected.id,
-          attendee_id: p.id,
-          record_date: selectedDate,
-          session_no: 1,
-
-          tidc_card_no: p.tidc_card_no,
-
-          entry_time: p.entry_time,
-          exit_time: p.exit_time,
-
-          card_exchange_time:
-            p.card_exchange_time,
-
-          card_return_time:
-            p.card_return_time
-        });
-
-      if (error) {
-        throw error;
-      }
-
-      continue;
-    }
-
-    const oldWasCompleted =
-      Boolean(oldRecord.card_exchange_time) &&
-      Boolean(oldRecord.card_return_time);
-
-    const exchangeChanged =
-      p.card_exchange_time !==
-      oldRecord.card_exchange_time;
-
-    // เริ่มรอบใหม่
-    if (
-      oldWasCompleted &&
-      exchangeChanged
-    ) {
-      // ทำให้ Log รอบเก่ามีข้อมูลล่าสุดก่อน
-      const { error: oldError } =
-        await client
-          .from("attendee_access_sessions")
-          .update({
-            tidc_card_no:
-              oldRecord.tidc_card_no,
-            entry_time:
-              oldRecord.entry_time,
-            exit_time:
-              oldRecord.exit_time,
-            card_exchange_time:
-              oldRecord.card_exchange_time,
-            card_return_time:
-              oldRecord.card_return_time,
-            updated_at:
-              new Date().toISOString()
-          })
-          .eq("id", latestSession.id);
-
-      if (oldError) {
-        throw oldError;
-      }
-
-      // สร้างรอบใหม่
-      const { error: newError } =
-        await client
-          .from("attendee_access_sessions")
-          .insert({
-            request_id: selected.id,
-            attendee_id: p.id,
-            record_date: selectedDate,
-
-            session_no:
-              latestSession.session_no + 1,
-
-            tidc_card_no:
-              p.tidc_card_no,
-
-            entry_time:
-              p.entry_time,
-
-            exit_time:
-              p.exit_time,
-
-            card_exchange_time:
-              p.card_exchange_time,
-
-            card_return_time:
-              p.card_return_time
-          });
-
-      if (newError) {
-        throw newError;
-      }
-
-      continue;
-    }
-
-    // ยังเป็นรอบเดิม → update Log รอบล่าสุด
-    const { error: updateError } =
-      await client
-        .from("attendee_access_sessions")
-        .update({
-          tidc_card_no:
-            p.tidc_card_no,
-
-          entry_time:
-            p.entry_time,
-
-          exit_time:
-            p.exit_time,
-
-          card_exchange_time:
-            p.card_exchange_time,
-
-          card_return_time:
-            p.card_return_time,
-
-          updated_at:
-            new Date().toISOString()
-        })
-        .eq("id", latestSession.id);
-
-    if (updateError) {
-      throw updateError;
-    }
-  }
-}
         
         async function save() {
   const patches = collect();
@@ -295,10 +136,7 @@ async function syncAccessSessions(patches, selectedDate) {
     alert("Demo mode ยังไม่รองรับข้อมูลรายวัน");
     return;
   }
-await syncAccessSessions(
-  patches,
-  selectedDate
-);
+
   const dailyRows = patches.map((p) => ({
     request_id: selected.id,
     attendee_id: p.id,
@@ -782,7 +620,8 @@ const dailyAttendees = dailyRequests
 
   popup.document.close();
 }
-tbody.onclick=e=>{const tr=e.target.closest('tr[data-id]');if(tr)open(requests.find(x=>x.id===tr.dataset.id))};detail.onclick=e=>{if(e.target.id==='close-detail'||e.target===detail)detail.hidden=true;const n=e.target.closest('.time-now');if (n) {   const row =     n.closest("tr[data-attendee-id]");    const target =     n.dataset.target;    const input =     n.closest("td")       .querySelector("." + target);    // ถ้ากดแลกบัตรใหม่หลังคืนบัตรแล้ว   if (     target === "card-exchange" &&     row   ) {     const attendeeId =       row.dataset.attendeeId;      const oldRecord =       dailyRecords.get(         String(attendeeId)       ) || {};      if (       oldRecord.card_exchange_time &&       oldRecord.card_return_time     ) {       const cardInput =         row.querySelector(".tidc-card");        // ถ้ายังเป็น Card No. เดิม ให้ล้าง       // แต่ถ้าพิมพ์ Card ใหม่ไว้แล้ว จะไม่ล้าง       if (         cardInput &&         cardInput.value.trim() ===           (oldRecord.tidc_card_no || "")       ) {         cardInput.value = "";       }        row.querySelector(         ".card-return"       ).value = "";        row.querySelector(         ".exit-time"       ).value = "";        row.querySelector(         ".entry-time"       ).value = "";     }   }    input.value = clock(); }if(e.target.id==='save')save().catch(x=>alert(x.message));if(e.target.id==='export-fr')window.AccessExports.exportFR037(selected);if(e.target.id==='print-fr')window.AccessExports.printFR037(selected)};['search','date-filter','status-filter'].forEach(id=>q('#'+id).addEventListener('input',render));q("#print-daily-button").onclick =
+tbody.onclick=e=>{const tr=e.target.closest('tr[data-id]');if(tr)open(requests.find(x=>x.id===tr.dataset.id))};detail.onclick=e=>{if(e.target.id==='close-detail'||e.target===detail)detail.hidden=true;const n=e.target.closest('.time-now');
+if(n)n.closest('td').querySelector('.'+n.dataset.target).value=clock();
   printDailySummary;q('#refresh-button').onclick=load;
 function show(){login.hidden=true;dash.hidden=false;load().catch(e=>alert(e.message))}q("#date-filter").addEventListener(
   "change",
