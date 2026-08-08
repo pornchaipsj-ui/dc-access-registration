@@ -363,7 +363,7 @@ const dailyAttendees = dailyRequests.flatMap(
                 ${
                   person
                     ? escapeHtml(
-                        formatTime(person.entry_time)
+                        formatTime(person.card_exchange_time)
                       )
                     : ""
                 }
@@ -373,7 +373,7 @@ const dailyAttendees = dailyRequests.flatMap(
                 ${
                   person
                     ? escapeHtml(
-                        formatTime(person.exit_time)
+                        formatTime(person.card_return_time)
                       )
                     : ""
                 }
