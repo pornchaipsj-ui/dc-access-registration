@@ -3,17 +3,17 @@ const {demoMode,getClient,readDemoRequests,updateDemoRequest,escapeHtml,formatDa
 const q=s=>document.querySelector(s); let client=null,requests=[],selected=null,dailyRecords=new Map();
 const login=q('#login-panel'),dash=q('#dashboard'),tbody=q('#request-table-body'),empty=q('#empty-state'),detail=q('#detail-panel'),content=q('#detail-content');
 function badge(s){return `<span class="status status--${s}">${({pending:'รอตรวจสอบ',approved:'อนุมัติแล้ว',rejected:'ไม่อนุมัติ',completed:'เสร็จสิ้น'})[s]||s}</span>`}
-async function load(){ if(demoMode) {requests=readDemoRequests();dailyRecords=new Map()} else {const r=await client.from('access_requests').select('*, attendees(*)').order('created_at',{ascending:false}); if(r.error) throw r.error; requests=r.data||[];await loadDailyRecords()} render(); if(selected&&!detail.hidden){selected=requests.find(r=>r.id===selected.id)||selected;open(selected)} }
-async function loadDailyRecords(){
-  dailyRecords=new Map();
-  const attendeeIds=requests.flatMap(r=>(r.attendees||[]).map(p=>p.id));
-  if(!attendeeIds.length)return;
-  const result=await client.from('attendee_daily_records').select('*').in('attendee_id',attendeeIds).order('record_date',{ascending:false});
+async function load(){ if(demoMode) {requests=readDemoRequests();dailyRecords=new Map()} else {const r=await client.from('access_requests').select('*, attendees(*)').order('created_at',{ascending:false}); if(r.error) throw r.error; requests=r.data||[]} render(); if(selected&&!detail.hidden){selected=requests.find(r=>r.id===selected.id)||selected;await open(selected)} }
+async function loadDailyRecords(requestId){
+  const records=new Map();
+  if(demoMode)return records;
+  const result=await client.from('attendee_daily_records').select('*').eq('request_id',requestId).order('record_date',{ascending:false});
   if(result.error)throw result.error;
   (result.data||[]).forEach(record=>{
     const attendeeId=String(record.attendee_id);
-    if(!dailyRecords.has(attendeeId))dailyRecords.set(attendeeId,record);
+    if(!records.has(attendeeId))records.set(attendeeId,record);
   });
+  return records;
 }
 function render(){const term=q('#search').value.toLowerCase(),st=q('#status-filter').value,dt=q('#date-filter').value; const rows=requests.filter(r=>(!st||r.status===st)&&(!dt||r.visit_date===dt)&&(!term||JSON.stringify(r).toLowerCase().includes(term))); tbody.innerHTML=rows.map(r=>`<tr data-id="${r.id}"><td><strong>${escapeHtml(r.request_code)}</strong></td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.project_name)}<small>${escapeHtml(r.room)}</small></td><td>
   ${escapeHtml(formatDate(r.visit_date))}
@@ -25,8 +25,11 @@ function render(){const term=q('#search').value.toLowerCase(),st=q('#status-filt
   }
 </td><td>${(r.attendees||[]).length}</td><td>${badge(r.status)}</td><td><button class="mini-button view">ตรวจสอบ</button></td></tr>`).join(''); empty.hidden=rows.length>0;}
 function timeValue(value){return value?escapeHtml(String(value).slice(0,5)):'-'}
-function open(r){
+async function open(r){
   selected=r;
+  const records=await loadDailyRecords(r.id);
+  if(selected.id!==r.id)return;
+  dailyRecords=records;
   const attendees=r.attendees||[];
 const people = attendees.map((p, i) => `
   <tr data-attendee-id="${p.id}">
@@ -132,7 +135,7 @@ const actions = `
 <th>Email</th><th>Card Type</th><th>ID / Passport</th><th>Car</th></tr></thead><tbody>${people}</tbody></table></div>${securityView}${actions}`;
   detail.hidden=false;
 }
-async function status(s){let u;if(demoMode)u=updateDemoRequest(selected.id,{status:s,reviewed_at:new Date().toISOString()});else{const r=await client.from('access_requests').update({status:s,reviewed_at:new Date().toISOString()}).eq('id',selected.id).select('*, attendees(*)').single();if(r.error)throw r.error;u=r.data} requests[requests.findIndex(x=>x.id===u.id)]=u; selected=u; render();open(u)}
+async function status(s){let u;if(demoMode)u=updateDemoRequest(selected.id,{status:s,reviewed_at:new Date().toISOString()});else{const r=await client.from('access_requests').update({status:s,reviewed_at:new Date().toISOString()}).eq('id',selected.id).select('*, attendees(*)').single();if(r.error)throw r.error;u=r.data} requests[requests.findIndex(x=>x.id===u.id)]=u; selected=u; render();await open(u)}
 async function saveAttendeeIdentity() {
   const rows = [
     ...content.querySelectorAll("tr[data-attendee-id]")
@@ -232,11 +235,11 @@ async function saveAttendeeIdentity() {
   }
 
   render();
-  open(data);
+  await open(data);
 
   alert("บันทึก Card Type / ID เรียบร้อย");
 }
-        tbody.onclick=e=>{const tr=e.target.closest('tr[data-id]');if(tr)open(requests.find(x=>x.id===tr.dataset.id))}; detail.onclick = (e) => {
+        tbody.onclick=e=>{const tr=e.target.closest('tr[data-id]');if(tr)open(requests.find(x=>x.id===tr.dataset.id)).catch(error=>alert(error.message||"ไม่สามารถโหลดข้อมูลได้"))}; detail.onclick = (e) => {
   if (
     e.target.id === "close-detail" ||
     e.target === detail
