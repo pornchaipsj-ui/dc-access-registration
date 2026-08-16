@@ -1,9 +1,20 @@
 (() => {"use strict";
 const {demoMode,getClient,readDemoRequests,updateDemoRequest,escapeHtml,formatDate,attendeeTypeLabel}=window.AccessApp;
-const q=s=>document.querySelector(s); let client=null,requests=[],selected=null;
+const q=s=>document.querySelector(s); let client=null,requests=[],selected=null,dailyRecords=new Map();
 const login=q('#login-panel'),dash=q('#dashboard'),tbody=q('#request-table-body'),empty=q('#empty-state'),detail=q('#detail-panel'),content=q('#detail-content');
 function badge(s){return `<span class="status status--${s}">${({pending:'รอตรวจสอบ',approved:'อนุมัติแล้ว',rejected:'ไม่อนุมัติ',completed:'เสร็จสิ้น'})[s]||s}</span>`}
-async function load(){ if(demoMode) requests=readDemoRequests(); else {const r=await client.from('access_requests').select('*, attendees(*)').order('created_at',{ascending:false}); if(r.error) throw r.error; requests=r.data||[]} render(); }
+async function load(){ if(demoMode) {requests=readDemoRequests();dailyRecords=new Map()} else {const r=await client.from('access_requests').select('*, attendees(*)').order('created_at',{ascending:false}); if(r.error) throw r.error; requests=r.data||[];await loadDailyRecords()} render(); if(selected&&!detail.hidden){selected=requests.find(r=>r.id===selected.id)||selected;open(selected)} }
+async function loadDailyRecords(){
+  dailyRecords=new Map();
+  const attendeeIds=requests.flatMap(r=>(r.attendees||[]).map(p=>p.id));
+  if(!attendeeIds.length)return;
+  const result=await client.from('attendee_daily_records').select('*').in('attendee_id',attendeeIds).order('record_date',{ascending:false});
+  if(result.error)throw result.error;
+  (result.data||[]).forEach(record=>{
+    const attendeeId=String(record.attendee_id);
+    if(!dailyRecords.has(attendeeId))dailyRecords.set(attendeeId,record);
+  });
+}
 function render(){const term=q('#search').value.toLowerCase(),st=q('#status-filter').value,dt=q('#date-filter').value; const rows=requests.filter(r=>(!st||r.status===st)&&(!dt||r.visit_date===dt)&&(!term||JSON.stringify(r).toLowerCase().includes(term))); tbody.innerHTML=rows.map(r=>`<tr data-id="${r.id}"><td><strong>${escapeHtml(r.request_code)}</strong></td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.project_name)}<small>${escapeHtml(r.room)}</small></td><td>
   ${escapeHtml(formatDate(r.visit_date))}
   ${
@@ -66,8 +77,8 @@ const people = attendees.map((p, i) => `
     <td>${escapeHtml(p.car_license || "-")}</td>
   </tr>
 `).join("");
-  const securityRows=attendees.map((p,i)=>`<tr><td>${i+1}</td><td><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.company||'')}</small></td><td>${escapeHtml(p.tidc_card_no||'-')}</td><td>${timeValue(p.entry_time)}</td><td>${timeValue(p.exit_time)}</td><td>${timeValue(p.card_exchange_time)}</td><td>${timeValue(p.card_return_time)}</td></tr>`).join('');
-  const securityView=(r.status==='approved'||r.status==='completed')?`<section class="security-view"><div class="section-heading"><div><p class="eyebrow">Security Record</p><h3>ข้อมูลที่ รปภ. บันทึก</h3></div><span class="status-note">ดูได้อย่างเดียว</span></div><div class="table-wrap table-wrap--detail"><table class="security-table"><thead><tr><th>No.</th><th>Name / Company</th><th>Card No.</th><th>เวลาเข้า</th><th>เวลาออก</th><th>เวลาแลกบัตร</th><th>เวลาคืนบัตร</th></tr></thead><tbody>${securityRows}</tbody></table></div></section>`:'';
+  const securityRows=attendees.map((p,i)=>{const record=dailyRecords.get(String(p.id))||{};return `<tr><td>${i+1}</td><td><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.company||'')}</small></td><td>${record.record_date?escapeHtml(formatDate(record.record_date)):'-'}</td><td>${escapeHtml(record.tidc_card_no||'-')}</td><td>${timeValue(record.entry_time)}</td><td>${timeValue(record.exit_time)}</td><td>${timeValue(record.card_exchange_time)}</td><td>${timeValue(record.card_return_time)}</td></tr>`}).join('');
+  const securityView=(r.status==='approved'||r.status==='completed')?`<section class="security-view"><div class="section-heading"><div><p class="eyebrow">Security Record</p><h3>ข้อมูลที่ รปภ. บันทึก</h3></div><span class="status-note">ดูได้อย่างเดียว</span></div><div class="table-wrap table-wrap--detail"><table class="security-table"><thead><tr><th>No.</th><th>Name / Company</th><th>Record Date</th><th>Card No.</th><th>เวลาเข้า</th><th>เวลาออก</th><th>เวลาแลกบัตร</th><th>เวลาคืนบัตร</th></tr></thead><tbody>${securityRows}</tbody></table></div></section>`:'';
 const approvalButtons =
   r.status === "pending"
     ? `
