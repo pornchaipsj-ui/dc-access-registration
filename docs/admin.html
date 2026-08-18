@@ -9,38 +9,19 @@
   พิมพ์สรุปรายวัน
 </button><button id="refresh-button" class="button button--secondary">รีเฟรช</button><button id="logout-button" class="button button--ghost">ออกจากระบบ</button></div></div>
 <section class="security-summary">
-  <div class="security-summary-card">
-    <span>จำนวนคนทั้งหมด</span>
-    <strong id="summary-total">0</strong>
-    <small>Total Attendees</small>
-  </div>
-
-  <div class="security-summary-card">
-    <span>แลกบัตรแล้ว</span>
-    <strong id="summary-exchanged">0</strong>
-    <small>Card Exchanged</small>
-  </div>
-
-  <div class="security-summary-card">
-    <span>จำนวนคนที่ยังอยู่</span>
-    <strong id="summary-inside">0</strong>
-    <small>Currently Inside</small>
-  </div>
-
-  <div class="security-summary-card">
-    <span>จำนวนคนที่ออกแล้ว</span>
-    <strong id="summary-exited">0</strong>
-    <small>Exited</small>
-  </div>
+  <div class="security-summary-card"><span>จำนวนคนทั้งหมด</span><strong id="summary-total">0</strong><small>Total Attendees</small></div>
+  <div class="security-summary-card"><span>แลกบัตรแล้ว</span><strong id="summary-exchanged">0</strong><small>Card Exchanged</small></div>
+  <div class="security-summary-card"><span>จำนวนคนที่ยังอยู่</span><strong id="summary-inside">0</strong><small>Currently Inside</small></div>
+  <div class="security-summary-card"><span>จำนวนคนที่ออกแล้ว</span><strong id="summary-exited">0</strong><small>Exited</small></div>
 </section>
-  <section class="panel"><div class="filters"><label>ค้นหา<input id="search" type="search" placeholder="เลขคำขอ ชื่อ บริษัท ทะเบียนรถ"></label><label>วันที่<input id="date-filter" type="date"></label><label>   สถานะ   <select id="status-filter">     <option value="approved">อนุมัติแล้ว</option>   </select> </label></div><div class="table-wrap"><table><thead><tr><th>Request</th><th>Location</th><th>Project / Room</th><th>Date</th><th>People</th><th>Status</th><th></th></tr></thead><tbody id="request-table-body"></tbody></table></div><div id="empty-state" class="empty-state">ไม่มีรายการที่อนุมัติแล้ว</div></section></section></main>
+<section class="panel"><div class="filters"><label>ค้นหา<input id="search" type="search" placeholder="เลขคำขอ ชื่อ บริษัท ทะเบียนรถ"></label><label>วันที่<input id="date-filter" type="date"></label><label>สถานะ<select id="status-filter"><option value="approved">อนุมัติแล้ว</option></select></label></div><div class="table-wrap"><table><thead><tr><th>Request</th><th>Location</th><th>Project / Room</th><th>Date</th><th>People</th><th>Status</th><th></th></tr></thead><tbody id="request-table-body"></tbody></table></div><div id="empty-state" class="empty-state">ไม่มีรายการที่อนุมัติแล้ว</div></section></section></main>
 <div id="detail-panel" class="detail-overlay" hidden><aside id="detail-content" class="detail-drawer"></aside></div>
 <script src="./assets/config.js" defer></script>
-  <script src="./assets/common.js" defer></script>
-  <script src="./assets/export.js" defer></script>
-  <script src="./assets/security.js?v=57" defer></script>
-  <script src="./assets/security-cards.js?v=3" defer></script>
-  <script src="./assets/security-inside.js?v=1" defer></script>
-  <script src="./assets/security-inside-id.js?v=1" defer></script>
-  <script src="./assets/security-save-fix.js?v=3" defer></script>
-  </body></html>
+<script src="./assets/common.js" defer></script>
+<script src="./assets/export.js" defer></script>
+<script src="./assets/security.js?v=57" defer></script>
+<script src="./assets/security-cards.js?v=3" defer></script>
+<script src="./assets/security-inside.js?v=1" defer></script>
+<script src="./assets/security-inside-id.js?v=1" defer></script>
+<script src="./assets/security-save-fix.js?v=4" defer></script>
+</body></html>
