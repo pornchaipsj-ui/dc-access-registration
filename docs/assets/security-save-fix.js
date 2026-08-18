@@ -142,6 +142,10 @@
       }
 
       applySavedRows(result.data);
+
+      // Sync security.js dailyRecords cache immediately after save.
+      dateFilter.dispatchEvent(new Event("change", { bubbles: true }));
+
       alert(`บันทึกข้อมูลรายวันเรียบร้อย ${result.data.length} คน`);
     } finally {
       saving = false;
