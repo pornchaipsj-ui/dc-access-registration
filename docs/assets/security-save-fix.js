@@ -107,6 +107,43 @@
     });
   }
 
+  function sameTime(a, b) {
+    return window.AccessApp.formatTime(a || "") === window.AccessApp.formatTime(b || "");
+  }
+
+  async function verifySavedRows(supabase, payload, selectedDate) {
+    const attendeeIds = payload.map((row) => row.attendee_id);
+    const verify = await supabase
+      .from("attendee_daily_records")
+      .select("attendee_id,record_date,tidc_card_no,entry_time,exit_time,card_exchange_time,card_return_time")
+      .eq("record_date", selectedDate)
+      .in("attendee_id", attendeeIds);
+
+    if (verify.error) throw verify.error;
+
+    const saved = verify.data || [];
+    const byAttendee = new Map(saved.map((row) => [String(row.attendee_id), row]));
+
+    for (const expected of payload) {
+      const actual = byAttendee.get(String(expected.attendee_id));
+      if (!actual) {
+        throw new Error(`Supabase ไม่พบข้อมูลที่บันทึกสำหรับ attendee ${expected.attendee_id.slice(-6)}`);
+      }
+
+      if (
+        String(actual.tidc_card_no || "") !== String(expected.tidc_card_no || "") ||
+        !sameTime(actual.entry_time, expected.entry_time) ||
+        !sameTime(actual.exit_time, expected.exit_time) ||
+        !sameTime(actual.card_exchange_time, expected.card_exchange_time) ||
+        !sameTime(actual.card_return_time, expected.card_return_time)
+      ) {
+        throw new Error(`ข้อมูลใน Supabase ไม่ตรงกับค่าที่บันทึกสำหรับ attendee ${expected.attendee_id.slice(-6)}`);
+      }
+    }
+
+    return saved;
+  }
+
   async function saveNow(button) {
     if (saving) return;
 
@@ -131,22 +168,16 @@
         ...row
       }));
 
-      const result = await supabase
+      const write = await supabase
         .from("attendee_daily_records")
-        .upsert(payload, { onConflict: "attendee_id,record_date" })
-        .select("attendee_id,record_date,tidc_card_no,entry_time,exit_time,card_exchange_time,card_return_time");
+        .upsert(payload, { onConflict: "attendee_id,record_date" });
 
-      if (result.error) throw result.error;
-      if (!result.data || result.data.length !== payload.length) {
-        throw new Error("บันทึกไม่ครบ กรุณาลองใหม่อีกครั้ง");
-      }
+      if (write.error) throw write.error;
 
-      applySavedRows(result.data);
+      const savedRows = await verifySavedRows(supabase, payload, selectedDate);
+      applySavedRows(savedRows);
 
-      // Sync security.js dailyRecords cache immediately after save.
-      dateFilter.dispatchEvent(new Event("change", { bubbles: true }));
-
-      alert(`บันทึกข้อมูลรายวันเรียบร้อย ${result.data.length} คน`);
+      alert(`บันทึกและตรวจสอบใน Supabase แล้ว ${payload.length} คน`);
     } finally {
       saving = false;
       button.disabled = false;
