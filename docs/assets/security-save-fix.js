@@ -183,6 +183,27 @@
     return saved;
   }
 
+  async function refreshCurrentRequestPeopleCount(supabase, requestId, selectedDate) {
+    const result = await supabase
+      .from("attendee_daily_records")
+      .select("attendee_id,card_exchange_time")
+      .eq("request_id", requestId)
+      .eq("record_date", selectedDate);
+
+    if (result.error) throw result.error;
+
+    const exchanged = (result.data || []).filter((row) => Boolean(row.card_exchange_time)).length;
+    const total = qa("tr[data-attendee-id]", content).length;
+
+    const requestRow = qa("#request-table-body tr[data-id]")
+      .find((row) => String(row.dataset.id) === String(requestId));
+
+    if (requestRow) {
+      const peopleCell = requestRow.children[4];
+      if (peopleCell) peopleCell.textContent = `${exchanged} / ${total}`;
+    }
+  }
+
   async function saveNow(button) {
     if (saving) return;
 
@@ -215,9 +236,7 @@
 
       const savedRows = await verifySavedRows(supabase, payload, selectedDate);
       applySavedRows(savedRows);
-
-      // Refresh security.js dailyRecords + People count (x / total)
-      dateFilter.dispatchEvent(new Event("change", { bubbles: true }));
+      await refreshCurrentRequestPeopleCount(supabase, requestId, selectedDate);
 
       alert(`บันทึกและตรวจสอบใน Supabase แล้ว ${payload.length} คน`);
     } finally {
