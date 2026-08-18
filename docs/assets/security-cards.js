@@ -71,37 +71,32 @@
     return qa("tr[data-attendee-id]", content);
   }
 
-  function rowState(row) {
-    const select = q("select.tidc-card", row);
-    const returnInput = q(".card-return", row);
-    return {
-      attendeeId: String(row.dataset.attendeeId || ""),
-      card: normalizeCard(select?.value),
-      returned: Boolean(returnInput?.value)
-    };
-  }
-
-  function locallyReservedCards(exceptAttendeeId = "") {
-    const reserved = new Map(activeCards);
+  function selectedInOtherRows(exceptAttendeeId = "") {
+    const used = new Map(activeCards);
 
     getRows().forEach((row) => {
-      const state = rowState(row);
-      if (!state.card || state.returned || state.attendeeId === exceptAttendeeId) return;
-      reserved.set(state.card, state.attendeeId);
+      const attendeeId = String(row.dataset.attendeeId || "");
+      const select = q("select.tidc-card", row);
+      const returned = Boolean(q(".card-return", row)?.value);
+      const card = normalizeCard(select?.value);
+
+      if (!card || returned || attendeeId === exceptAttendeeId) return;
+      used.set(card, attendeeId);
     });
 
-    return reserved;
+    return used;
   }
 
   function buildOptions(select, currentValue) {
     const row = select.closest("tr[data-attendee-id]");
     const attendeeId = String(row?.dataset.attendeeId || "");
     const current = normalizeCard(currentValue ?? select.value);
-    const reserved = locallyReservedCards(attendeeId);
+    const used = selectedInOtherRows(attendeeId);
+
     const options = [{ value: "", label: "ไม่ได้แลกบัตร / No Card" }];
 
     cardList(currentCardType).forEach((card) => {
-      const holder = reserved.get(card);
+      const holder = used.get(card);
       if (!holder || holder === attendeeId || card === current) {
         options.push({ value: card, label: card });
       }
@@ -115,9 +110,8 @@
     }
 
     select.innerHTML = options
-      .map(
-        (option) =>
-          `<option value="${window.AccessApp.escapeHtml(option.value)}">${window.AccessApp.escapeHtml(option.label)}</option>`
+      .map((option) =>
+        `<option value="${window.AccessApp.escapeHtml(option.value)}">${window.AccessApp.escapeHtml(option.label)}</option>`
       )
       .join("");
 
@@ -125,18 +119,16 @@
     if (select.value !== current) select.value = "";
   }
 
-  function refreshAllOptions() {
-    const selects = qa("select.tidc-card", content);
-    const currentValues = new Map(
-      selects.map((select) => [
-        String(select.closest("tr[data-attendee-id]")?.dataset.attendeeId || ""),
-        select.value
-      ])
-    );
+  function refreshOtherOptions(changedSelect) {
+    const changedRow = changedSelect?.closest("tr[data-attendee-id]");
+    const changedAttendeeId = String(changedRow?.dataset.attendeeId || "");
 
-    selects.forEach((select) => {
-      const attendeeId = String(select.closest("tr[data-attendee-id]")?.dataset.attendeeId || "");
-      buildOptions(select, currentValues.get(attendeeId) || "");
+    qa("select.tidc-card", content).forEach((select) => {
+      const row = select.closest("tr[data-attendee-id]");
+      const attendeeId = String(row?.dataset.attendeeId || "");
+      if (attendeeId === changedAttendeeId) return;
+      const current = select.value;
+      buildOptions(select, current);
     });
   }
 
@@ -163,7 +155,7 @@
 
     q("#tidc-card-type", wrapper).addEventListener("change", (event) => {
       currentCardType = event.target.value;
-      refreshAllOptions();
+      qa("select.tidc-card", content).forEach((select) => buildOptions(select, ""));
     });
   }
 
@@ -182,17 +174,18 @@
       const current = input.value;
       input.replaceWith(select);
       buildOptions(select, current);
-      select.addEventListener("change", refreshAllOptions);
-    });
 
-    refreshAllOptions();
+      // Do not rebuild the same dropdown while the user is selecting it.
+      select.addEventListener("change", () => {
+        setTimeout(() => refreshOtherOptions(select), 0);
+      });
+    });
   }
 
   async function enhanceCurrentRequest() {
     try {
       await loadActiveCards();
       transformInputs();
-      refreshAllOptions();
     } catch (error) {
       console.error("Unable to load TIDC card availability", error);
       transformInputs();
@@ -206,66 +199,51 @@
     }, 0);
   }
 
-  function findCurrentRow(attendeeId) {
-    return getRows().find((row) => String(row.dataset.attendeeId) === String(attendeeId));
-  }
+  detail.addEventListener("click", async (event) => {
+    const saveButton = event.target.closest("#save");
+    if (!saveButton) return;
 
-  function validateCards() {
-    const activeInForm = new Map();
+    event.preventDefault();
+    event.stopImmediatePropagation();
 
-    for (const row of getRows()) {
-      const state = rowState(row);
-      if (!state.card || state.returned) continue;
+    try {
+      saveButton.disabled = true;
+      await loadActiveCards();
 
-      const duplicateAttendee = activeInForm.get(state.card);
-      if (duplicateAttendee && duplicateAttendee !== state.attendeeId) {
-        throw new Error(`Card No. ${state.card} ถูกเลือกซ้ำในใบงานนี้`);
-      }
-      activeInForm.set(state.card, state.attendeeId);
+      const seen = new Map();
+      for (const row of getRows()) {
+        const attendeeId = String(row.dataset.attendeeId || "");
+        const card = normalizeCard(q("select.tidc-card", row)?.value);
+        const returned = Boolean(q(".card-return", row)?.value);
+        if (!card || returned) continue;
 
-      const databaseHolder = activeCards.get(state.card);
-      if (databaseHolder && databaseHolder !== state.attendeeId) {
-        const holderRow = findCurrentRow(databaseHolder);
-        const holderReturnedNow = Boolean(holderRow && q(".card-return", holderRow)?.value);
-        if (!holderReturnedNow) {
-          throw new Error(`Card No. ${state.card} กำลังถูกใช้งานอยู่ กรุณาเลือกบัตรใบอื่น`);
+        if (seen.has(card) && seen.get(card) !== attendeeId) {
+          throw new Error(`Card No. ${card} ถูกเลือกซ้ำในใบงานนี้`);
+        }
+        seen.set(card, attendeeId);
+
+        const holder = activeCards.get(card);
+        if (holder && holder !== attendeeId) {
+          throw new Error(`Card No. ${card} กำลังถูกใช้งานอยู่ กรุณาเลือกบัตรใบอื่น`);
         }
       }
+
+      if (typeof detail.onclick !== "function") {
+        throw new Error("ไม่พบคำสั่งบันทึกข้อมูล รปภ.");
+      }
+
+      detail.onclick({ target: saveButton });
+    } catch (error) {
+      alert(error.message || "ไม่สามารถตรวจสอบ Card No. ได้");
+    } finally {
+      saveButton.disabled = false;
     }
-  }
-
-  detail.addEventListener(
-    "click",
-    async (event) => {
-      const saveButton = event.target.closest("#save");
-      if (!saveButton) return;
-
-      event.preventDefault();
-      event.stopImmediatePropagation();
-
-      try {
-        saveButton.disabled = true;
-        await loadActiveCards();
-        validateCards();
-
-        if (typeof detail.onclick !== "function") {
-          throw new Error("ไม่พบคำสั่งบันทึกข้อมูล รปภ.");
-        }
-
-        detail.onclick({ target: saveButton });
-      } catch (error) {
-        alert(error.message || "ไม่สามารถตรวจสอบ Card No. ได้");
-      } finally {
-        saveButton.disabled = false;
-      }
-    },
-    true
-  );
+  }, true);
 
   dateFilter.addEventListener("change", () => {
-    loadActiveCards()
-      .then(refreshAllOptions)
-      .catch((error) => console.error("Unable to refresh TIDC cards", error));
+    loadActiveCards().catch((error) =>
+      console.error("Unable to refresh TIDC cards", error)
+    );
   });
 
   const observer = new MutationObserver(scheduleEnhance);
@@ -300,6 +278,8 @@
     }
     select.tidc-card {
       min-width: 155px;
+      pointer-events: auto !important;
+      cursor: pointer;
     }
   `;
   document.head.appendChild(style);
