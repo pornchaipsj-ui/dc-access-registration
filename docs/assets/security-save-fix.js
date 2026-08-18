@@ -11,6 +11,8 @@
 
   let client = null;
   let saving = false;
+  let hydrateTimer = null;
+  let hydrating = false;
 
   async function getClient() {
     if (!client) client = await window.AccessApp.getClient();
@@ -107,6 +109,43 @@
     });
   }
 
+  async function hydrateVisibleRows() {
+    if (hydrating || saving || window.AccessApp.demoMode) return;
+    const selectedDate = dateFilter.value;
+    const rows = qa("tr[data-attendee-id]", content);
+    if (!selectedDate || !rows.length || detail.hidden) return;
+
+    const attendeeIds = rows
+      .map((row) => String(row.dataset.attendeeId || ""))
+      .filter(Boolean);
+    if (!attendeeIds.length) return;
+
+    hydrating = true;
+    try {
+      const supabase = await getClient();
+      const result = await supabase
+        .from("attendee_daily_records")
+        .select("attendee_id,record_date,tidc_card_no,entry_time,exit_time,card_exchange_time,card_return_time")
+        .eq("record_date", selectedDate)
+        .in("attendee_id", attendeeIds);
+
+      if (result.error) throw result.error;
+      applySavedRows(result.data || []);
+    } catch (error) {
+      console.error("Unable to reload saved daily records", error);
+    } finally {
+      hydrating = false;
+    }
+  }
+
+  function scheduleHydrate() {
+    clearTimeout(hydrateTimer);
+    hydrateTimer = setTimeout(() => {
+      prepareSaveButton();
+      hydrateVisibleRows();
+    }, 120);
+  }
+
   function sameTime(a, b) {
     return window.AccessApp.formatTime(a || "") === window.AccessApp.formatTime(b || "");
   }
@@ -197,7 +236,9 @@
     });
   }, true);
 
-  const observer = new MutationObserver(prepareSaveButton);
+  dateFilter.addEventListener("change", scheduleHydrate);
+
+  const observer = new MutationObserver(scheduleHydrate);
   observer.observe(content, { childList: true, subtree: true });
   prepareSaveButton();
 })();
