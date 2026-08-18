@@ -216,6 +216,9 @@
       const savedRows = await verifySavedRows(supabase, payload, selectedDate);
       applySavedRows(savedRows);
 
+      // Refresh security.js dailyRecords + People count (x / total)
+      dateFilter.dispatchEvent(new Event("change", { bubbles: true }));
+
       alert(`บันทึกและตรวจสอบใน Supabase แล้ว ${payload.length} คน`);
     } finally {
       saving = false;
