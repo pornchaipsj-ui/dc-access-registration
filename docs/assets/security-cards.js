@@ -15,7 +15,6 @@
   let currentCardType = "VEN";
   let client = null;
   let refreshTimer = null;
-  let bypassNextSaveValidation = false;
 
   function normalizeCard(value) {
     return String(value || "").trim().toUpperCase();
@@ -241,21 +240,23 @@
       const saveButton = event.target.closest("#save");
       if (!saveButton) return;
 
-      if (bypassNextSaveValidation) {
-        bypassNextSaveValidation = false;
-        return;
-      }
-
       event.preventDefault();
       event.stopImmediatePropagation();
 
       try {
+        saveButton.disabled = true;
         await loadActiveCards();
         validateCards();
-        bypassNextSaveValidation = true;
-        saveButton.click();
+
+        if (typeof detail.onclick !== "function") {
+          throw new Error("ไม่พบคำสั่งบันทึกข้อมูล รปภ.");
+        }
+
+        detail.onclick({ target: saveButton });
       } catch (error) {
         alert(error.message || "ไม่สามารถตรวจสอบ Card No. ได้");
+      } finally {
+        saveButton.disabled = false;
       }
     },
     true
