@@ -133,6 +133,7 @@
 
     const name = prompt("ชื่อ-นามสกุล / Name");
     if (!name?.trim()) return;
+
     const company = prompt("บริษัท / Company");
     if (!company?.trim()) throw new Error("กรุณาระบุบริษัท");
 
@@ -142,6 +143,20 @@
 
     const mobile = (prompt("Mobile (เว้นว่างได้)") || "").trim();
     const email = (prompt("Email (เว้นว่างได้)") || "").trim();
+
+    const cardType = (prompt("Card Type: ID หรือ PASSPORT", "ID") || "").trim().toUpperCase();
+    if (!["ID", "PASSPORT"].includes(cardType)) {
+      throw new Error("Card Type ต้องเป็น ID หรือ PASSPORT");
+    }
+
+    const identityLast4 = (prompt("ID / Passport 4 ตัวท้าย (เว้นว่างได้)") || "")
+      .replace(/[\s-]/g, "")
+      .trim()
+      .toUpperCase();
+    if (identityLast4 && !/^[A-Z0-9]{4}$/.test(identityLast4)) {
+      throw new Error("ID / Passport ต้องเป็น 4 ตัวท้าย");
+    }
+
     const car = (prompt("ทะเบียนรถ / Car License (เว้นว่างได้)") || "").trim();
 
     const supabase = await getClient();
@@ -171,9 +186,9 @@
       name: name.trim().slice(0, 160),
       mobile: mobile.slice(0, 100),
       email: email.slice(0, 200),
-      card_type: null,
-      identity_last4: null,
-      identity_masked: null,
+      card_type: cardType,
+      identity_last4: identityLast4 || null,
+      identity_masked: identityLast4 ? `XXXX${identityLast4}` : null,
       car_license: car.slice(0, 50)
     });
     if (insert.error) throw insert.error;
