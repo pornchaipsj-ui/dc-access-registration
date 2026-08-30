@@ -7,7 +7,7 @@
   if (!content || !window.AccessApp) return;
 
   const CARD_TYPES = ["VEN", "CUS"];
-  const CARD_COUNT = 99;
+  const CARD_COUNT = 200;
   let currentType = "VEN";
   let timer = null;
 
