@@ -51,7 +51,7 @@
           <div><p class="eyebrow">Security Follow-up</p><h2>สรุปผู้ที่ยังไม่คืนบัตรข้ามวัน</h2></div>
           <button id="close-overdue-card" class="icon-button" type="button">×</button>
         </div>
-        <p class="status-note">แสดงเฉพาะรายการที่รับบัตรก่อนวันนี้ และยังไม่มีเวลาคืนบัตร — กดเลขลงทะเบียนเพื่อเปิดใบงาน</p>
+        <p class="status-note">แสดงเฉพาะรายการที่รับบัตรก่อนวันนี้ และยังไม่มีเวลาคืนบัตร — กดเลขลงทะเบียนเพื่อเปิดข้อมูลของวันที่รับบัตร</p>
         <div id="overdue-card-content"><div class="empty-state">กำลังโหลดข้อมูล...</div></div>
       </aside>`;
       document.body.appendChild(overlay);
@@ -63,7 +63,13 @@
         }
 
         const link = event.target.closest(".overdue-request-link");
-        if (link) openRequest(link.dataset.requestId, link.dataset.requestCode, link.dataset.recordDate);
+        if (link) {
+          openRequest(
+            link.dataset.requestId,
+            link.dataset.requestCode,
+            link.dataset.recordDate
+          ).catch((error) => alert(error.message || "ไม่สามารถเปิดใบงานได้"));
+        }
       });
     }
   }
@@ -139,7 +145,63 @@
     </div>`;
   }
 
-  function openRequest(requestId, requestCode, recordDate) {
+  async function getDayRecords(requestId, recordDate) {
+    if (window.AccessApp.demoMode) return [];
+    const supabase = await getClient();
+    const result = await supabase
+      .from("attendee_daily_records")
+      .select("attendee_id,tidc_card_no,entry_time,exit_time,card_exchange_time,card_return_time,record_date")
+      .eq("request_id", requestId)
+      .eq("record_date", recordDate);
+    if (result.error) throw result.error;
+    return result.data || [];
+  }
+
+  function fillDetailWithDayRecords(records, recordDate) {
+    const detailContent = q("#detail-content");
+    if (!detailContent) return;
+
+    const byAttendee = new Map(records.map((record) => [String(record.attendee_id), record]));
+
+    detailContent.querySelectorAll("tr[data-attendee-id]").forEach((row) => {
+      const record = byAttendee.get(String(row.dataset.attendeeId));
+      if (!record) return;
+
+      const card = row.querySelector(".tidc-card");
+      const entry = row.querySelector(".entry-time");
+      const exit = row.querySelector(".exit-time");
+      const exchange = row.querySelector(".card-exchange");
+      const returned = row.querySelector(".card-return");
+
+      if (card) {
+        if (card.tagName === "SELECT") {
+          const value = record.tidc_card_no || "";
+          if (value && ![...card.options].some((option) => option.value === value)) {
+            card.add(new Option(value, value));
+          }
+          card.value = value;
+        } else {
+          card.value = record.tidc_card_no || "";
+        }
+      }
+      if (entry) entry.value = window.AccessApp.formatTime?.(record.entry_time) || "";
+      if (exit) exit.value = window.AccessApp.formatTime?.(record.exit_time) || "";
+      if (exchange) exchange.value = window.AccessApp.formatTime?.(record.card_exchange_time) || "";
+      if (returned) returned.value = window.AccessApp.formatTime?.(record.card_return_time) || "";
+    });
+
+    let note = q("#overdue-open-date-note", detailContent);
+    if (!note) {
+      note = document.createElement("div");
+      note.id = "overdue-open-date-note";
+      note.className = "status-note overdue-open-date-note";
+      const instruction = q(".security-instruction", detailContent);
+      if (instruction) instruction.insertAdjacentElement("afterend", note);
+    }
+    if (note) note.textContent = `กำลังแสดงข้อมูลบัตรของวันที่ ${formatDate(recordDate)} / Showing card record for ${formatDate(recordDate)}`;
+  }
+
+  async function openRequest(requestId, requestCode, recordDate) {
     overlay.hidden = true;
 
     const dateFilter = q("#date-filter");
@@ -147,23 +209,38 @@
     if (dateFilter && recordDate) dateFilter.value = recordDate;
     if (search) search.value = requestCode || "";
 
+    // Trigger the normal Security date flow first.
     dateFilter?.dispatchEvent(new Event("change", { bubbles: true }));
     search?.dispatchEvent(new Event("input", { bubbles: true }));
 
+    // Read the exact historical daily records independently so we do not depend
+    // on the current day's in-memory map.
+    const historicalRecordsPromise = getDayRecords(requestId, recordDate);
+
     let attempts = 0;
-    const timer = setInterval(() => {
-      attempts += 1;
-      const row = q(`#request-table-body tr[data-id="${CSS.escape(String(requestId))}"]`);
-      if (row) {
-        clearInterval(timer);
-        row.querySelector("button")?.click();
-        return;
-      }
-      if (attempts >= 12) {
-        clearInterval(timer);
-        alert("ไม่พบใบงานนี้ในรายการ Security อาจมีการเปลี่ยนสถานะ Request แล้ว");
-      }
-    }, 150);
+    await new Promise((resolve, reject) => {
+      const timer = setInterval(() => {
+        attempts += 1;
+        const row = q(`#request-table-body tr[data-id="${CSS.escape(String(requestId))}"]`);
+        if (row) {
+          clearInterval(timer);
+          row.querySelector("button")?.click();
+          resolve();
+          return;
+        }
+        if (attempts >= 20) {
+          clearInterval(timer);
+          reject(new Error("ไม่พบใบงานนี้ในรายการ Security อาจมีการเปลี่ยนสถานะ Request แล้ว"));
+        }
+      }, 150);
+    });
+
+    const historicalRecords = await historicalRecordsPromise;
+
+    // security-card-simple.js converts Card No. inputs to selects shortly after
+    // the detail opens, so wait briefly and then inject the exact overdue-day data.
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    fillDetailWithDayRecords(historicalRecords, recordDate);
   }
 
   async function refreshCount() {
@@ -218,6 +295,12 @@
       text-decoration: underline;
       cursor: pointer;
       font: inherit;
+    }
+    .overdue-open-date-note {
+      margin: 10px 0 14px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #fff7ed;
     }
   `;
   document.head.appendChild(style);
