@@ -51,7 +51,7 @@
           <div><p class="eyebrow">Security Follow-up</p><h2>สรุปผู้ที่ยังไม่คืนบัตรข้ามวัน</h2></div>
           <button id="close-overdue-card" class="icon-button" type="button">×</button>
         </div>
-        <p class="status-note">แสดงเฉพาะรายการที่รับบัตรก่อนวันนี้ และยังไม่มีเวลาคืนบัตร</p>
+        <p class="status-note">แสดงเฉพาะรายการที่รับบัตรก่อนวันนี้ และยังไม่มีเวลาคืนบัตร — กดเลขลงทะเบียนเพื่อเปิดใบงาน</p>
         <div id="overdue-card-content"><div class="empty-state">กำลังโหลดข้อมูล...</div></div>
       </aside>`;
       document.body.appendChild(overlay);
@@ -59,7 +59,11 @@
       overlay.addEventListener("click", (event) => {
         if (event.target === overlay || event.target.id === "close-overdue-card") {
           overlay.hidden = true;
+          return;
         }
+
+        const link = event.target.closest(".overdue-request-link");
+        if (link) openRequest(link.dataset.requestId, link.dataset.requestCode, link.dataset.recordDate);
       });
     }
   }
@@ -86,7 +90,7 @@
 
     const [attendeesResult, requestsResult] = await Promise.all([
       supabase.from("attendees").select("id,name,mobile,company").in("id", attendeeIds),
-      supabase.from("access_requests").select("id,request_code,requester_name,requester_phone,requester_company").in("id", requestIds)
+      supabase.from("access_requests").select("id,request_code,requester_name,requester_phone,requester_company,visit_date,visit_end_date,status").in("id", requestIds)
     ]);
 
     if (attendeesResult.error) throw attendeesResult.error;
@@ -123,7 +127,7 @@
         </tr></thead>
         <tbody>${rows.map((row, index) => `<tr>
           <td>${index + 1}</td>
-          <td><strong>${esc(row.request.request_code || "-")}</strong></td>
+          <td><button type="button" class="overdue-request-link" data-request-id="${esc(row.request_id)}" data-request-code="${esc(row.request.request_code || "")}" data-record-date="${esc(row.record_date)}"><strong>${esc(row.request.request_code || "-")}</strong></button></td>
           <td><strong>${esc(row.attendee.name || "-")}</strong><small>${esc(row.attendee.company || "")}</small></td>
           <td>${esc(row.attendee.mobile || "-")}</td>
           <td><strong>${esc(row.tidc_card_no || "-")}</strong></td>
@@ -133,6 +137,33 @@
         </tr>`).join("")}</tbody>
       </table>
     </div>`;
+  }
+
+  function openRequest(requestId, requestCode, recordDate) {
+    overlay.hidden = true;
+
+    const dateFilter = q("#date-filter");
+    const search = q("#search");
+    if (dateFilter && recordDate) dateFilter.value = recordDate;
+    if (search) search.value = requestCode || "";
+
+    dateFilter?.dispatchEvent(new Event("change", { bubbles: true }));
+    search?.dispatchEvent(new Event("input", { bubbles: true }));
+
+    let attempts = 0;
+    const timer = setInterval(() => {
+      attempts += 1;
+      const row = q(`#request-table-body tr[data-id="${CSS.escape(String(requestId))}"]`);
+      if (row) {
+        clearInterval(timer);
+        row.querySelector("button")?.click();
+        return;
+      }
+      if (attempts >= 12) {
+        clearInterval(timer);
+        alert("ไม่พบใบงานนี้ในรายการ Security อาจมีการเปลี่ยนสถานะ Request แล้ว");
+      }
+    }, 150);
   }
 
   async function refreshCount() {
@@ -179,6 +210,15 @@
     }
     .overdue-card-drawer { width: min(1180px, 96vw); }
     .overdue-card-table { min-width: 1050px; }
+    .overdue-request-link {
+      border: 0;
+      background: none;
+      padding: 0;
+      color: #175cd3;
+      text-decoration: underline;
+      cursor: pointer;
+      font: inherit;
+    }
   `;
   document.head.appendChild(style);
 
