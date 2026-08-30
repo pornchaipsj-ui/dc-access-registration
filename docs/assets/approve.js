@@ -101,7 +101,17 @@ const approvalButtons =
         Reject
       </button>
     `
-    : "";
+    : r.status === "approved"
+      ? `
+        <button
+          class="button button--danger status-action"
+          data-status="rejected"
+          type="button"
+        >
+          Reject
+        </button>
+      `
+      : "";
 
 const actions = `
   <div class="detail-actions">
