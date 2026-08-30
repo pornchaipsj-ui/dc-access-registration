@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="ระบบอัปโหลด StaffTemplate เพื่อขอเข้าพื้นที่ศูนย์คอมพิวเตอร์">
-  <title>Upload StaffTemplate</title>
+  <meta name="description" content="ระบบอัปโหลด FR-333 เพื่อขอเข้าพื้นที่ศูนย์คอมพิวเตอร์">
+  <title>FR-333 Access Registration</title>
   <link rel="stylesheet" href="./assets/styles.css?v=33">
 </head>
 <body>
@@ -12,7 +12,7 @@
     <div class="site-header__inner">
       <div class="brand">
         <span class="brand__mark">DC</span>
-        <span><strong>Access Registration</strong><small>StaffTemplate Upload</small></span>
+        <span><strong>Access Registration</strong><small>FR-333 Upload</small></span>
       </div>
     </div>
   </header>
@@ -23,7 +23,7 @@
       <div>
         <p class="eyebrow">Access Request</p>
         <h1>ลงทะเบียนเข้าพื้นที่ / Access Registration</h1>
-        <p>   กรุณากรอกข้อมูลการเข้าพื้นที่และอัปโหลด StaffTemplate   ระบบจะตรวจสอบรายชื่อและสร้างคำขอให้อัตโนมัติ   / Please complete the access information and upload the StaffTemplate.   The system will validate the attendee list and create the request automatically. </p>
+        <p>กรุณากรอกข้อมูลการเข้าพื้นที่และอัปโหลด FR-333 ระบบจะตรวจสอบรายชื่อและสร้างคำขอให้อัตโนมัติ / Please complete the access information and upload FR-333. The system will validate the attendee list and create the request automatically.</p>
       </div>
     </section>
 
@@ -32,158 +32,48 @@
     <form id="access-form">
       <section class="panel">
         <div class="panel__header">
-          <div><h2>1. ข้อมูลการเข้าพื้นที่ / Access Information</h2><p>   ระบุวันที่ตามแผน โดยไม่ต้องระบุเวลาเข้า–ออก   / Enter the planned work dates. Entry and exit times are not required. </p></div>
+          <div><h2>1. ข้อมูลการเข้าพื้นที่ / Access Information</h2><p>ระบุวันที่ตามแผน โดยไม่ต้องระบุเวลาเข้า–ออก / Enter the planned work dates. Entry and exit times are not required.</p></div>
         </div>
         <div class="form-grid access-info-grid">
-          <label>
-  <span class="field-label">
-    Location / สถานที่ <b class="required-mark">*</b>
-  </span>
-
-  <select id="location" required>
-              <option value="">เลือกสถานที่</option>
-              <option>TT1</option><option>TT2</option><option>MTG</option><option>BNA</option><option>RYG</option>
-            </select>
-          </label>
-        <label>
-  <span class="field-label">
-    Start Date / วันที่เริ่มงาน <b class="required-mark">*</b>
-  </span>
-
-  <input
-    id="visit-date"
-    type="date"
-    required
-  >
-</label>
-
-<label>
-  <span class="field-label">
-    End Date / วันที่สิ้นสุดงาน <b class="required-mark">*</b>
-  </span>
-
-  <input
-    id="visit-end-date"
-    type="date"
-    required
-  >
-
-  <small>Maximum 7 days / ระยะเวลาทำงานรวมไม่เกิน 7 วัน</small>
-</label>
-          <label>
-  <span class="field-label">
-    Project Name / ชื่อโครงการ <b class="required-mark">*</b>
-  </span>
-
-  <input
-    id="project-name" maxlength="160" required placeholder="เช่น Customer Project"></label>
+          <label><span class="field-label">Location / สถานที่ <b class="required-mark">*</b></span><select id="location" required><option value="">เลือกสถานที่</option><option>TT1</option><option>TT2</option><option>MTG</option><option>BNA</option><option>RYG</option></select></label>
+          <label><span class="field-label">Start Date / วันที่เริ่มงาน <b class="required-mark">*</b></span><input id="visit-date" type="date" required></label>
+          <label><span class="field-label">End Date / วันที่สิ้นสุดงาน <b class="required-mark">*</b></span><input id="visit-end-date" type="date" required><small>Maximum 7 days / ระยะเวลาทำงานรวมไม่เกิน 7 วัน</small></label>
+          <label><span class="field-label">Project Name / ชื่อโครงการ <b class="required-mark">*</b></span><input id="project-name" maxlength="160" required placeholder="เช่น Customer Project"></label>
           <label>Room / พื้นที่ <span>*</span><input id="room" maxlength="100" required placeholder="เช่น DH01, SCR1"></label>
           <label class="span-2">Objective / วัตถุประสงค์ <span>*</span><input id="objective" maxlength="240" required placeholder="เช่น Install server"></label>
-          <label>
-  Internal Coordinator / ผู้ประสานงานภายใน
-  <input
-    id="host-name"
-    maxlength="160"
-    placeholder="ชื่อ-นามสกุล"
-  >
-</label>
+          <label>Internal Coordinator / ผู้ประสานงานภายใน<input id="host-name" maxlength="160" placeholder="ชื่อ-นามสกุล"></label>
+          <label>Coordinator Tel. / เบอร์ผู้ประสานงาน<input id="host-phone" inputmode="tel" maxlength="20" placeholder="08x-xxx-xxxx"></label>
 
-<label>
-  Coordinator Tel. / เบอร์ผู้ประสานงาน
-  <input
-    id="host-phone"
-    inputmode="tel"
-    maxlength="20"
-    placeholder="08x-xxx-xxxx"
-  >
-</label>
+          <div class="requester-group">
+            <div class="requester-heading"><strong>Request by / ผู้ยื่นคำขอ</strong><small>Contact information for this request / ข้อมูลสำหรับติดต่อกลับเกี่ยวกับคำขอนี้</small></div>
+            <div class="requester-inputs">
+              <label>Name / ชื่อผู้ยื่นคำขอ <span>*</span><input id="requester-name" maxlength="160" required placeholder="Full name / ชื่อ-นามสกุล"></label>
+              <label>Company / บริษัท <span>*</span><input id="requester-company" maxlength="160" required placeholder="Company name / ชื่อบริษัท"></label>
+              <label>E-mail / อีเมล <span>*</span><input id="requester-email" type="email" maxlength="200" required placeholder="name@company.com"></label>
+              <label>Tel. / เบอร์โทรศัพท์ <span>*</span><input id="requester-phone" type="tel" inputmode="tel" maxlength="30" required placeholder="08x-xxx-xxxx"></label>
+            </div>
+          </div>
 
-<div class="requester-group">
-  <div class="requester-heading">
-    <strong>Request by / ผู้ยื่นคำขอ</strong>
-    <small>   Contact information for this request   / ข้อมูลสำหรับติดต่อกลับเกี่ยวกับคำขอนี้ </small>
-  </div>
-
-  <div class="requester-inputs">
-    <label>
-      Name / ชื่อผู้ยื่นคำขอ <span>*</span>
-      <input
-        id="requester-name"
-        maxlength="160"
-        required
-        placeholder="Full name / ชื่อ-นามสกุล"
-      >
-    </label>
-
-    <label>
-      Company / บริษัท <span>*</span>
-      <input
-        id="requester-company"
-        maxlength="160"
-        required
-        placeholder="Company name / ชื่อบริษัท"
-      >
-    </label>
-
-    <label>
-      E-mail / อีเมล <span>*</span>
-      <input
-        id="requester-email"
-        type="email"
-        maxlength="200"
-        required
-        placeholder="name@company.com"
-      >
-    </label>
-
-    <label>
-      Tel. / เบอร์โทรศัพท์ <span>*</span>
-      <input
-        id="requester-phone"
-        type="tel"
-        inputmode="tel"
-        maxlength="30"
-        required
-        placeholder="08x-xxx-xxxx"
-      >
-    </label>
-  </div>
-</div>
-
-<label class="span-4">
-  Remarks / หมายเหตุ
-  <textarea
-    id="notes"
-    maxlength="1000"
-    placeholder="รายละเอียดเพิ่มเติม / อุปกรณ์ที่นำเข้า / ข้อควรระวัง"
-  ></textarea>
-</label>
+          <label class="span-4">Remarks / หมายเหตุ<textarea id="notes" maxlength="1000" placeholder="รายละเอียดเพิ่มเติม / อุปกรณ์ที่นำเข้า / ข้อควรระวัง"></textarea></label>
         </div>
       </section>
 
-<section class="panel">
-  <div class="panel__header">
-    <div>
-      <h2>2. รายชื่อผู้เข้าพื้นที่ / Attendee List</h2>
-      <p>   รองรับไฟล์ .xlsx และสูงสุด 100 รายชื่อ   / Supports .xlsx files with a maximum of 100 attendees. </p>
-    </div>
-
-    <span id="attendee-count" class="badge">0/100</span>
-  </div>
+      <section class="panel">
+        <div class="panel__header">
+          <div><h2>2. FR-333 รายชื่อผู้เข้าพื้นที่ / Attendee List</h2><p>รองรับไฟล์ FR-333 .xlsx และสูงสุด 100 รายชื่อ / Supports FR-333 .xlsx files with a maximum of 100 attendees.</p></div>
+          <span id="attendee-count" class="badge">0/100</span>
+        </div>
 
         <label id="upload-zone" class="upload-zone" for="staff-file">
           <input id="staff-file" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
           <span class="upload-zone__icon">↑</span>
-          <strong>   Select or drop StaffTemplate.xlsx   / เลือกหรือลากไฟล์ StaffTemplate.xlsx มาวาง </strong>
-          <small>   The system reads data from the Data sheet only and does not retain the original file.   / ระบบอ่านข้อมูลจากชีต Data เท่านั้น และไม่เก็บไฟล์ต้นฉบับ </small>
+          <strong>Select or drop FR-333-v02.xlsx / เลือกหรือลากไฟล์ FR-333-v02.xlsx มาวาง</strong>
+          <small>ระบบอ่านรายชื่อจากชีต FR-333-v02 โดยตรง และไม่เก็บไฟล์ต้นฉบับ / The system reads the attendee list directly from the FR-333-v02 sheet and does not retain the original file.</small>
         </label>
 
         <div class="upload-help">
-          <div>
-            <strong>Required Columns / คอลัมน์ที่ต้องมี</strong>
-            <p>COMPANY, ATTENDEE TYPE, NAME, MOBILE, EMAIL, CARD TYPE, ID, CAR LICENSE</p>
-          </div>
-          <a class="button button--secondary" href="./templates/StaffTemplate.xlsx" download>Download Blank StaffTemplate / ดาวน์โหลด StaffTemplate เปล่า</a>
+          <div><strong>FR-333 Columns / คอลัมน์ที่ใช้</strong><p>COMPANY, ATTENDEE TYPE, NAME, MOBILE, EMAIL, CARD TYPE, ID, CAR LICENSE</p></div>
+          <a class="button button--secondary" href="#">Download Blank FR-333 / ดาวน์โหลด FR-333 เปล่า</a>
         </div>
 
         <div id="file-status" class="file-status" hidden></div>
@@ -191,29 +81,27 @@
 
         <div id="preview-section" hidden>
           <div class="preview-heading"><h3>Submission Preview / ตัวอย่างข้อมูลที่จะส่ง</h3><span id="source-file-name"></span></div>
-          <div class="table-wrap table-wrap--preview">
-            <table>
-              <thead><tr><th>No.</th><th>Name</th><th>Type</th><th>Company</th><th>Mobile</th><th>Email</th><th>ID/Passport</th><th>Car</th></tr></thead>
-              <tbody id="preview-body"></tbody>
-            </table>
-          </div>
+          <div class="table-wrap table-wrap--preview"><table><thead><tr><th>No.</th><th>Name</th><th>Type</th><th>Company</th><th>Mobile</th><th>Email</th><th>ID/Passport</th><th>Car</th></tr></thead><tbody id="preview-body"></tbody></table></div>
         </div>
 
         <div class="privacy-note"><strong>Data Protection / การคุ้มครองข้อมูล:</strong> ระบบอ่านเลข ID / Passport ภายในเบราว์เซอร์ แล้วส่งขึ้นฐานข้อมูลเฉพาะ 4 ตัวท้ายและเลขแบบปกปิดเท่านั้น ไม่ส่งเลขเต็มและไม่เก็บไฟล์ต้นฉบับ</div>
       </section>
 
       <section class="panel">
-        <div class="panel__header"><div><h2>3. ยืนยันข้อมูล / Confirmation</h2><p>   กรุณาตรวจสอบวันที่ สถานที่ และรายชื่อก่อนส่งคำขอ   / Please review the dates, location, and attendee list before submitting. </p></div></div>
+        <div class="panel__header"><div><h2>3. ยืนยันข้อมูล / Confirmation</h2><p>กรุณาตรวจสอบวันที่ สถานที่ และรายชื่อก่อนส่งคำขอ / Please review the dates, location, and attendee list before submitting.</p></div></div>
         <div class="form-actions">
-          <label class="consent"><input type="checkbox" required><span>   ข้าพเจ้ายืนยันว่าข้อมูลถูกต้อง และยินยอมให้ใช้ข้อมูลเพื่อการควบคุมการเข้า–ออกพื้นที่และการรักษาความปลอดภัย   / I confirm that the information is correct and consent to its use for access control and security purposes. </span></label>
+          <label class="consent"><input type="checkbox" required><span>ข้าพเจ้ายืนยันว่าข้อมูลถูกต้อง และยินยอมให้ใช้ข้อมูลเพื่อการควบคุมการเข้า–ออกพื้นที่และการรักษาความปลอดภัย / I confirm that the information is correct and consent to its use for access control and security purposes.</span></label>
           <button id="submit-button" class="button button--primary" type="submit">Submit Access Request / ส่งคำขอเข้าพื้นที่</button>
         </div>
       </section>
     </form>
   </main>
-  <footer class="site-footer">After approval, Security will record the actual entry and exit times and card exchange details.  / หลังได้รับอนุมัติ รปภ. จะบันทึกเวลาเข้า–ออกจริง และเวลาแลก–คืนบัตร</footer>
+
+  <footer class="site-footer">After approval, Security will record the actual entry and exit times and card exchange details. / หลังได้รับอนุมัติ รปภ. จะบันทึกเวลาเข้า–ออกจริง และเวลาแลก–คืนบัตร</footer>
   <script src="./assets/config.js?v=21" defer></script>
   <script src="./assets/common.js" defer></script>
+  <script src="./assets/fr333.js?v=1" defer></script>
+  <script src="./assets/fr333-registration.js?v=1" defer></script>
   <script src="./assets/app.js?v=26" defer></script>
 </body>
 </html>
