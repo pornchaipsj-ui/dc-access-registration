@@ -39,7 +39,11 @@
           <label><span class="field-label">Start Date / วันที่เริ่มงาน <b class="required-mark">*</b></span><input id="visit-date" type="date" required></label>
           <label><span class="field-label">End Date / วันที่สิ้นสุดงาน <b class="required-mark">*</b></span><input id="visit-end-date" type="date" required><small>Maximum 7 days / ระยะเวลาทำงานรวมไม่เกิน 7 วัน</small></label>
           <label><span class="field-label">Project Name / ชื่อโครงการ <b class="required-mark">*</b></span><input id="project-name" maxlength="160" required placeholder="เช่น Customer Project"></label>
-          <label>Room / พื้นที่ <span>*</span><input id="room" maxlength="100" required placeholder="เช่น DH01, SCR1"></label>
+          <div class="work-area-field">
+            <span class="field-label">Room / พื้นที่ <b class="required-mark">*</b></span>
+            <input id="room" type="hidden">
+            <div id="work-area-picker" class="work-area-picker"></div>
+          </div>
           <label class="span-2">Objective / วัตถุประสงค์ <span>*</span><input id="objective" maxlength="240" required placeholder="เช่น Install server"></label>
           <label>Internal Coordinator / ผู้ประสานงานภายใน<input id="host-name" maxlength="160" placeholder="ชื่อ-นามสกุล"></label>
           <label>Coordinator Tel. / เบอร์ผู้ประสานงาน<input id="host-phone" inputmode="tel" maxlength="20" placeholder="08x-xxx-xxxx"></label>
@@ -102,6 +106,7 @@
   <script src="./assets/common.js" defer></script>
   <script src="./assets/fr333.js?v=1" defer></script>
   <script src="./assets/fr333-registration.js?v=1" defer></script>
+  <script src="./assets/work-area-multiselect.js?v=1" defer></script>
   <script src="./assets/app.js?v=26" defer></script>
 </body>
 </html>
