@@ -14,13 +14,6 @@
         "EVL Storage-A","EVL-Storage-B","NWS-A","NWS-B","BTS room","ENT-A","ENT-D","MMR-A","MMR-B","EE-1A/1","EE-1B/1",
         "EE-2A/1","EE-2B/1","EE-Store-01","AHU","Fire SPK","SOC","FOC","Corrodor zone","External zone"
       ]
-    },
-    {
-      name: "Customer zone",
-      items: [
-        "DH07","DH08","SCR01","SCR02","Office zone","Customer server room","ERAD room","SOC customer room",
-        "SEC storage room","Storage room"
-      ]
     }
   ];
 
