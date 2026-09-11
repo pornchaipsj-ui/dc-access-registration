@@ -10,7 +10,7 @@
     {
       name: "TIDC-Zone",
       items: [
-        "Office zone","EE-DH07","EE-DH08","EE-DH-SCR","Store-02","Store-05","Store-06","Store-07","Store-08",
+        "Office zone","EE-DH07","EE-DH08","EE-DH-SCR","FWU01-DH07","FWU02-DH07","FWU01-DH08","FWU02-DH08","FWU01-SCR01","FWU02-SCR01","FWU01-SCR02","FWU02-SCR02","Store-02","Store-05","Store-06","Store-07","Store-08",
         "EVL Storage-A","EVL-Storage-B","NWS-A","NWS-B","BTS room","ENT-A","ENT-D","MMR-A","MMR-B","EE-1A/1","EE-1B/1",
         "EE-2A/1","EE-2B/1","EE-Store-01","AHU","Fire SPK","SOC","FOC","Corrodor zone","External zone"
       ]
