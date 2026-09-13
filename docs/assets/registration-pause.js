@@ -11,7 +11,7 @@
   if (modeBanner) {
     modeBanner.hidden = false;
     modeBanner.innerHTML = `
-      <strong>Registration Temporarily Paused / ปิดรับการลงทะเบียนชั่วคราว</strong><br>
+      <strong>Registration Paused / ปิดรับการลงทะเบียน</strong><br>
       ระบบยังคงเก็บข้อมูลเดิมทั้งหมด และหน้า Approver / Security ยังใช้งานได้ตามปกติ<br>
       Existing records are unchanged. Approver and Security functions remain available.
     `;
@@ -22,7 +22,7 @@
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     event.stopImmediatePropagation();
-    window.alert("ระบบลงทะเบียนเข้าพื้นที่ปิดให้บริการชั่วคราว กรุณาติดต่อผู้ประสานงาน");
+    window.alert("ระบบลงทะเบียนเข้าพื้นที่ปิดให้บริการ กรุณาติดต่อผู้ประสานงาน");
   }, true);
 
   form.querySelectorAll("input, select, textarea, button").forEach((element) => {
@@ -30,7 +30,7 @@
   });
 
   if (submitButton) {
-    submitButton.textContent = "Registration Paused / ปิดรับการลงทะเบียนชั่วคราว";
+    submitButton.textContent = "Registration Paused / ปิดรับการลงทะเบียน";
   }
 
   form.setAttribute("aria-disabled", "true");
