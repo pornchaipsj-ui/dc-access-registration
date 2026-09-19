@@ -1,39 +1,58 @@
 (() => {
   "use strict";
 
-  const enabled = window.APP_CONFIG?.REGISTRATION_ENABLED !== false;
-  if (enabled) return;
+  const config = window.APP_CONFIG || {};
+  if (config.REGISTRATION_ENABLED === false) return;
 
   const form = document.querySelector("#access-form");
-  const modeBanner = document.querySelector("#mode-banner");
-  const submitButton = document.querySelector("#submit-button");
+  const main = document.querySelector("main.container");
+  if (!form || !main) return;
 
-  if (modeBanner) {
-    modeBanner.hidden = false;
-    modeBanner.innerHTML = `
-      <strong>Registration Paused / ปิดรับการลงทะเบียน</strong><br>
-      ระบบยังคงเก็บข้อมูลเดิมทั้งหมด และหน้า Approver / Security ยังใช้งานได้ตามปกติ<br>
-      Existing records are unchanged. Approver and Security functions remain available.
-    `;
-  }
-
-  if (!form) return;
-
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    window.alert("ระบบลงทะเบียนเข้าพื้นที่ปิดให้บริการ กรุณาติดต่อผู้ประสานงาน");
-  }, true);
-
-  form.querySelectorAll("input, select, textarea, button").forEach((element) => {
-    element.disabled = true;
+  // Hide the registration content until the PIN is accepted.
+  Array.from(main.children).forEach((element) => {
+    if (element !== form) element.hidden = true;
   });
+  form.hidden = true;
 
-  if (submitButton) {
-    submitButton.textContent = "Registration Paused / ปิดรับการลงทะเบียน";
-  }
+  const gate = document.createElement("section");
+  gate.id = "registration-pin-gate";
+  gate.className = "login-shell";
+  gate.innerHTML = `
+    <form id="registration-pin-form" class="login-card" autocomplete="off">
+      <p class="eyebrow">Access Registration</p>
+      <h1>Enter Access PIN</h1>
+      <p>กรุณาใส่ PIN เพื่อเปิดหน้าลงทะเบียน / Please enter the PIN to continue.</p>
+      <label>
+        PIN
+        <input id="registration-pin" type="password" inputmode="numeric"
+          pattern="[0-9]*" maxlength="6" autocomplete="off" required>
+      </label>
+      <p id="registration-pin-error" class="error-message" hidden>
+        PIN ไม่ถูกต้อง / Incorrect PIN
+      </p>
+      <button class="button button--primary" type="submit">Continue / ดำเนินการต่อ</button>
+    </form>
+  `;
+  main.prepend(gate);
 
-  form.setAttribute("aria-disabled", "true");
-  form.style.opacity = "0.58";
-  form.style.pointerEvents = "none";
+  const pinForm = gate.querySelector("#registration-pin-form");
+  const pinInput = gate.querySelector("#registration-pin");
+  const error = gate.querySelector("#registration-pin-error");
+
+  pinForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    if (pinInput.value === String(config.REGISTRATION_PIN || "")) {
+      gate.remove();
+      Array.from(main.children).forEach((element) => {
+        element.hidden = false;
+      });
+      form.hidden = false;
+      return;
+    }
+
+    error.hidden = false;
+    pinInput.value = "";
+    pinInput.focus();
+  });
 })();
