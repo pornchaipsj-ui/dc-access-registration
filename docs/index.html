@@ -62,9 +62,82 @@
         </div>
       </section>
 
+
+      <section class="panel" id="work-permit-section">
+        <div class="panel__header">
+          <div>
+            <h2>2. ใบขออนุญาตปฏิบัติงาน / Work Permit (FR-125)</h2>
+            <p>กรอกข้อมูลส่วนที่ 1 สำหรับ Permit Requester และตรวจสอบเอกสารก่อนส่งให้ Safety Review / Complete Section 1 for Safety Review.</p>
+          </div>
+          <span class="badge">FR-125-v03</span>
+        </div>
+
+        <div class="form-grid">
+          <label>Start Time / เวลาเริ่มงาน <span>*</span><input id="wp-start-time" type="time" required></label>
+          <label>End Time / เวลาสิ้นสุด <span>*</span><input id="wp-end-time" type="time" required></label>
+          <label class="span-2">Work Description / รายละเอียดงาน <span>*</span><textarea id="wp-description" maxlength="1000" required placeholder="Describe the work scope / ระบุรายละเอียดและขอบเขตงาน"></textarea></label>
+
+          <div class="span-4 wp-box">
+            <strong>Work Permit Type / ประเภทใบอนุญาต <span>*</span></strong>
+            <div class="wp-check-grid">
+              <label><input type="radio" name="wp-permit-type" value="General Work" required> General Work / งานทั่วไป</label>
+              <label><input type="radio" name="wp-permit-type" value="Confined Space"> Confined Space / พื้นที่อับอากาศ</label>
+              <label><input type="radio" name="wp-permit-type" value="Work at Height"> Work at Height &gt; 1.8 m</label>
+              <label><input type="radio" name="wp-permit-type" value="Excavation"> Excavation / งานขุด</label>
+              <label><input type="radio" name="wp-permit-type" value="Radiation"> Radiation / งานเกี่ยวข้องกับรังสี</label>
+              <label><input type="radio" name="wp-permit-type" value="Hot Work"> Hot Work</label>
+              <label><input type="radio" name="wp-permit-type" value="Mobile Crane"> Lifting (Mobile Crane) / งานยก</label>
+              <label><input type="radio" name="wp-permit-type" value="Electrical Work"> Electrical Work / งานไฟฟ้า</label>
+              <label><input type="radio" name="wp-permit-type" value="Other"> Other / อื่นๆ</label>
+            </div>
+          </div>
+
+          <div class="span-4 wp-box">
+            <strong>Type of Work / ลักษณะงาน <span>*</span></strong>
+            <div class="wp-check-grid">
+              <label><input type="radio" name="wp-work-type" value="Construction Work" required> Construction Work</label>
+              <label><input type="radio" name="wp-work-type" value="Building Internal Systems"> Building Internal Systems</label>
+              <label><input type="radio" name="wp-work-type" value="Building Management Work"> Building Management Work</label>
+              <label><input type="radio" name="wp-work-type" value="Maintenance Work"> Maintenance Work</label>
+              <label><input type="radio" name="wp-work-type" value="Security"> Security</label>
+              <label><input type="radio" name="wp-work-type" value="Other"> Other</label>
+            </div>
+          </div>
+
+          <label>Department / แผนก<input id="wp-requester-department" maxlength="120"></label>
+          <label>Job Owner / TIDC Job Controller<input id="wp-job-owner" maxlength="160" placeholder="Full name / ชื่อ-นามสกุล"></label>
+          <label>Job Owner Tel.<input id="wp-job-owner-phone" maxlength="30" inputmode="tel"></label>
+          <label>Job Owner Department<input id="wp-job-owner-department" maxlength="120"></label>
+
+          <label>Contractor Job Controller <span>*</span><input id="wp-contractor-controller" maxlength="160" required></label>
+          <label>Contractor Controller Tel. <span>*</span><input id="wp-contractor-phone" maxlength="30" inputmode="tel" required></label>
+          <label>Contractor Company <span>*</span><input id="wp-contractor-company" maxlength="160" required></label>
+          <label>Contractor Department<input id="wp-contractor-department" maxlength="120"></label>
+
+          <label class="span-2">Tools / Equipment List / รายการเครื่องมือและอุปกรณ์ <span>*</span><textarea id="wp-tools" maxlength="1500" required></textarea></label>
+          <label class="span-2">Additional PPE / PPE ตามความเสี่ยง<textarea id="wp-ppe" maxlength="1000" placeholder="เช่น Safety glasses, gloves, Full Body Harness"></textarea></label>
+
+          <div class="span-4 wp-box">
+            <strong>Supporting Documents / เอกสารประกอบ</strong>
+            <div class="wp-check-grid">
+              <label><input id="wp-jsa" type="checkbox"> Job Safety Analysis (JSA)</label>
+              <label><input id="wp-personnel" type="checkbox" checked> List of Personnel / รายชื่อผู้ปฏิบัติงาน</label>
+              <label><input id="wp-tools-list" type="checkbox" checked> List of Tools / Equipment</label>
+              <label><input id="wp-risk-checklist" type="checkbox"> Checklist by Risk Type</label>
+              <label><input id="wp-sds" type="checkbox"> SDS (if any)</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions wp-actions">
+          <button id="wp-preview" class="button button--secondary" type="button">Preview FR-125 / ตรวจสอบเอกสาร</button>
+          <button id="wp-print" class="button button--secondary" type="button">Print FR-125 / พิมพ์เอกสาร</button>
+        </div>
+      </section>
+
       <section class="panel">
         <div class="panel__header">
-          <div><h2>2. FR-333 รายชื่อผู้เข้าพื้นที่ / Attendee List</h2><p>รองรับไฟล์ FR-333 .xlsx และสูงสุด 100 รายชื่อ / Supports FR-333 .xlsx files with a maximum of 100 attendees.</p></div>
+          <div><h2>3. FR-333 รายชื่อผู้เข้าพื้นที่ / Attendee List</h2><p>รองรับไฟล์ FR-333 .xlsx และสูงสุด 100 รายชื่อ / Supports FR-333 .xlsx files with a maximum of 100 attendees.</p></div>
           <span id="attendee-count" class="badge">0/100</span>
         </div>
 
@@ -92,7 +165,7 @@
       </section>
 
       <section class="panel">
-        <div class="panel__header"><div><h2>3. ยืนยันข้อมูล / Confirmation</h2><p>กรุณาตรวจสอบวันที่ สถานที่ และรายชื่อก่อนส่งคำขอ / Please review the dates, location, and attendee list before submitting.</p></div></div>
+        <div class="panel__header"><div><h2>4. ยืนยันข้อมูล / Confirmation</h2><p>กรุณาตรวจสอบวันที่ สถานที่ และรายชื่อก่อนส่งคำขอ / Please review the dates, location, and attendee list before submitting.</p></div></div>
         <div class="form-actions">
           <label class="consent"><input type="checkbox" required><span>ข้าพเจ้ายืนยันว่าข้อมูลถูกต้อง และยินยอมให้ใช้ข้อมูลเพื่อการควบคุมการเข้า–ออกพื้นที่และการรักษาความปลอดภัย / I confirm that the information is correct and consent to its use for access control and security purposes.</span></label>
           <button id="submit-button" class="button button--primary" type="submit">Submit Access Request / ส่งคำขอเข้าพื้นที่</button>
@@ -107,6 +180,7 @@
   <script src="./assets/fr333.js?v=1" defer></script>
   <script src="./assets/fr333-registration.js?v=1" defer></script>
   <script src="./assets/work-area-multiselect.js?v=2" defer></script>
+  <script src="./assets/work-permit.js?v=1" defer></script>
   <script src="./assets/app.js?v=26" defer></script>
   <script src="./assets/registration-pause.js?v=2" defer></script>
 </body>
