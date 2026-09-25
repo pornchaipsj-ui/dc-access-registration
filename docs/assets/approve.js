@@ -3,7 +3,7 @@ const {demoMode,getClient,readDemoRequests,updateDemoRequest,escapeHtml,formatDa
 const q=s=>document.querySelector(s); let client=null,requests=[],selected=null,dailyRecords=new Map();
 const login=q('#login-panel'),dash=q('#dashboard'),tbody=q('#request-table-body'),empty=q('#empty-state'),detail=q('#detail-panel'),content=q('#detail-content');
 function badge(s){return `<span class="status status--${s}">${({pending:'รอตรวจสอบ',approved:'อนุมัติแล้ว',rejected:'ไม่อนุมัติ',completed:'เสร็จสิ้น'})[s]||s}</span>`}
-async function load(){ if(demoMode) {requests=readDemoRequests();dailyRecords=new Map()} else {const r=await client.from('access_requests').select('*, attendees(*)').order('created_at',{ascending:false}); if(r.error) throw r.error; requests=r.data||[]} render(); if(selected&&!detail.hidden){selected=requests.find(r=>r.id===selected.id)||selected;await open(selected)} }
+async function load(){ if(demoMode) {requests=readDemoRequests();dailyRecords=new Map()} else {const r=await client.from('access_requests').select('*, attendees(*)').order('created_at',{ascending:false}); if(r.error) throw r.error; requests=r.data||[]} window.__accessRequests=requests; render(); if(selected&&!detail.hidden){selected=requests.find(r=>r.id===selected.id)||selected;await open(selected)} }
 async function loadDailyRecords(requestId){
   const records=new Map();
   if(demoMode)return records;
@@ -15,7 +15,7 @@ async function loadDailyRecords(requestId){
   });
   return records;
 }
-function render(){const term=q('#search').value.toLowerCase(),st=q('#status-filter').value,dt=q('#date-filter').value; const rows=requests.filter(r=>(!st||r.status===st)&&(!dt||r.visit_date===dt)&&(!term||JSON.stringify(r).toLowerCase().includes(term))); tbody.innerHTML=rows.map(r=>`<tr data-id="${r.id}"><td><strong>${escapeHtml(r.request_code)}</strong></td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.project_name)}<small>${escapeHtml(r.room)}</small></td><td>
+function render(){window.__accessRequests=requests;const term=q('#search').value.toLowerCase(),st=q('#status-filter').value,dt=q('#date-filter').value; const rows=requests.filter(r=>(!st||r.status===st)&&(!dt||r.visit_date===dt)&&(!term||JSON.stringify(r).toLowerCase().includes(term))); tbody.innerHTML=rows.map(r=>`<tr data-id="${r.id}"><td><strong>${escapeHtml(r.request_code)}</strong></td><td>${escapeHtml(r.location)}</td><td>${escapeHtml(r.project_name)}<small>${escapeHtml(r.room)}</small></td><td>
   ${escapeHtml(formatDate(r.visit_date))}
   ${
     r.visit_end_date &&
