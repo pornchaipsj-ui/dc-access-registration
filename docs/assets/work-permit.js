@@ -58,6 +58,13 @@
     if(printNow) setTimeout(()=>w.print(),300);
   }
 
+  window.WorkPermitForm = {
+    collect: data,
+    validate: valid,
+    preview: () => openPreview(false),
+    print: () => openPreview(true)
+  };
+
   byId("wp-preview")?.addEventListener("click",()=>openPreview(false));
   byId("wp-print")?.addEventListener("click",()=>openPreview(true));
 
