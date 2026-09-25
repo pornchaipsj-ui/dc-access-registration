@@ -323,7 +323,8 @@ try {
     host_name: value("#host-name") || null,
     host_phone: value("#host-phone") || null,
     notes: value("#notes") || null,
-    source_file_name: selectedFileName.slice(0, 255)
+    source_file_name: selectedFileName.slice(0, 255),
+    work_permit: window.WorkPermitForm?.collect ? window.WorkPermitForm.collect() : null
   };
 }
 
