@@ -28,23 +28,23 @@ async function renderPdfBackground(){
 }
 renderPdfBackground();
 let workPermitNo="";
-const no=document.createElement("input");no.id="wp-work-permit-no";no.readOnly=true;no.placeholder="Run Work Permit No.";no.className="fr125-overlay-input fr125-overlay-number";Object.assign(no.style,{left:"73%",top:"4.2%",width:"21%",height:"2.3%"});overlay.appendChild(no);
+const no=document.createElement("input");no.id="wp-work-permit-no";no.readOnly=true;no.placeholder="Run Work Permit No.";no.className="fr125-overlay-input fr125-overlay-number";Object.assign(no.style,{left:"73%",top:"7.2%",width:"21%",height:"1.65%"});overlay.appendChild(no);
 const fields=[
-["wp-work-date","date",27.2,16.0,18,2.3],["wp-start-time","time",48.0,16.0,15,2.3],["wp-end-time","time",69.3,16.0,15,2.3],
-["wp-description","text",28.5,18.8,58,2.3],["wp-equipment","text",19.5,21.2,45,2.3],["wp-area","text",69.2,21.2,20,2.3],
-["wp-car-license","text",25.5,29.5,61,2.3],["wp-requester-name","text",25.5,32.0,26,2.3],["wp-requester-phone","text",54.3,32.0,14,2.3],["wp-requester-company","text",71.0,32.0,16,2.3],
-["wp-job-owner","text",28.0,34.2,24,2.3],["wp-job-owner-phone","text",54.3,34.2,14,2.3],["wp-job-owner-company","text",71.0,34.2,16,2.3],
-["wp-contractor-controller","text",30.0,36.5,22,2.3],["wp-contractor-phone","text",54.3,36.5,14,2.3],["wp-contractor-company","text",71.0,36.5,16,2.3]
+["wp-work-date","date",27.0,22.45,17.5,1.75],["wp-start-time","time",52.0,22.45,13.5,1.75],["wp-end-time","time",73.0,22.45,13.5,1.75],
+["wp-description","text",28.0,25.35,59,1.7],["wp-equipment","text",19.5,27.85,45,1.7],["wp-area","text",69.0,27.85,20,1.7],
+["wp-car-license","text",25.0,33.55,61,1.65],["wp-requester-name","text",25.0,36.25,26,1.65],["wp-requester-phone","text",54.0,36.25,14,1.65],["wp-requester-company","text",71.0,36.25,16,1.65],
+["wp-job-owner","text",28.0,38.55,24,1.65],["wp-job-owner-phone","text",54.0,38.55,14,1.65],["wp-job-owner-company","text",71.0,38.55,16,1.65],
+["wp-contractor-controller","text",30.0,40.85,22,1.65],["wp-contractor-phone","text",54.0,40.85,14,1.65],["wp-contractor-company","text",71.0,40.85,16,1.65]
 ];
 for(const [id,type,x,y,w,h] of fields){const el=document.createElement("input");el.id=id;el.type=type;el.className="fr125-overlay-input";Object.assign(el.style,{left:x+"%",top:y+"%",width:w+"%",height:h+"%"});overlay.appendChild(el)}
 const checks=[
-["general","งานทั่วไป",8.2,10.8],["confined","งานในพื้นที่อับอากาศ",28.0,10.8],["height","งานบนที่สูง > 1.8 m.",49.8,10.8],["excavation","งานขุด",70.0,10.8],["radiation","งานที่เกี่ยวข้องกับรังสี",83.0,10.8],
-["hot","Hot Work",8.2,13.0],["lifting","งานยก (Mobile Crane)",28.0,13.0],["electrical","งานไฟฟ้า",49.8,13.0],["other","อื่นๆ",70.0,13.0]
+["general","งานทั่วไป",8.0,16.0],["confined","งานในพื้นที่อับอากาศ",28.0,16.0],["height","งานบนที่สูง > 1.8 m.",49.8,16.0],["excavation","งานขุด",70.0,16.0],["radiation","งานที่เกี่ยวข้องกับรังสี",83.0,16.0],
+["hot","Hot Work",8.0,18.25],["lifting","งานยก (Mobile Crane)",28.0,18.25],["electrical","งานไฟฟ้า",49.8,18.25],["other","อื่นๆ",70.0,18.25]
 ];
 for(const [key,value,x,y] of checks){const el=document.createElement("input");el.type="radio";el.name="wp-permit-type";el.value=value;el.className="fr125-overlay-check";Object.assign(el.style,{left:x+"%",top:y+"%"});overlay.appendChild(el)}
-const work=[["งานก่อสร้าง",15.3,24.0],["ระบบภายในอาคาร",44.3,24.0],["งานจัดการอาคาร",73.7,24.0],["งานซ่อมบำรุง",15.3,26.2],["Security",44.3,26.2],["อื่นๆ",73.7,26.2]];
+const work=[["งานก่อสร้าง",15.3,30.15],["ระบบภายในอาคาร",44.3,30.15],["งานจัดการอาคาร",73.7,30.15],["งานซ่อมบำรุง",15.3,32.35],["Security",44.3,32.35],["อื่นๆ",73.7,32.35]];
 for(const [value,x,y] of work){const el=document.createElement("input");el.type="radio";el.name="wp-work-type";el.value=value;el.className="fr125-overlay-check";Object.assign(el.style,{left:x+"%",top:y+"%"});overlay.appendChild(el)}
-const docs=[["wp-jsa",8.5,40.3],["wp-supervisor-cert",44.7,40.3],["wp-personnel",8.5,42.7],["wp-risk-checklist",44.7,42.7],["wp-tools-list",8.5,45.1],["wp-sds",44.7,45.1]];
+const docs=[["wp-jsa",8.5,44.55],["wp-supervisor-cert",44.7,44.55],["wp-personnel",8.5,46.85],["wp-risk-checklist",44.7,46.85],["wp-tools-list",8.5,49.15],["wp-sds",44.7,49.15]];
 for(const [id,x,y] of docs){const el=document.createElement("input");el.id=id;el.type="checkbox";el.className="fr125-overlay-check";Object.assign(el.style,{left:x+"%",top:y+"%"});overlay.appendChild(el)}
 function radio(name){return document.querySelector('input[name="'+name+'"]:checked')?.value||""}
 function val(id){return byId(id)?.value?.trim()||""}
@@ -59,5 +59,5 @@ function preview(printNow=false){if(!valid())return;const w=window.open("./asset
 window.WorkPermitForm={collect,validate:valid,preview:()=>preview(false),print:()=>preview(true),runNumber,syncAttendees};
 byId("wp-preview")?.addEventListener("click",()=>preview(false));byId("wp-print")?.addEventListener("click",()=>preview(true));
 const st=document.createElement("style");st.textContent=`
-.fr125-pdf-workspace{display:flex;flex-direction:column;align-items:center;gap:28px;padding:24px;background:#eef1f5;border-radius:12px;overflow:auto}.fr125-pdf-page{position:relative;width:min(100%,1040px);aspect-ratio:210/297;background:#fff;box-shadow:0 4px 18px #0002;margin:0 auto}.fr125-pdf-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1;background:#fff}.fr125-pdf-overlay{z-index:2}.fr125-pdf-overlay{position:absolute;inset:0;pointer-events:none}.fr125-overlay-input,.fr125-overlay-check{position:absolute;z-index:3;pointer-events:auto}.fr125-overlay-input{border:0;border-bottom:1px solid #1d4ed8;background:rgba(255,255,210,.55);font-size:clamp(8px,1vw,12px);padding:0 2px;outline:none}.fr125-overlay-input:focus{background:#fff7b2;box-shadow:0 0 0 1px #1d4ed8}.fr125-overlay-check{width:1.45%;height:1.45%;margin:0;accent-color:#111}.fr125-pdf-overlay--locked{pointer-events:none}@media(max-width:700px){.fr125-pdf-workspace{align-items:flex-start;padding:10px}.fr125-pdf-page{width:900px;max-width:none}}@media print{.site-header,.hero,.panel:not(#work-permit-section),.wp-actions{display:none!important}.fr125-pdf-workspace{padding:0;background:#fff}.fr125-pdf-page{box-shadow:none;page-break-after:always;width:210mm;height:297mm}}`;document.head.appendChild(st);
+.fr125-pdf-workspace{display:flex;flex-direction:column;align-items:center;gap:28px;padding:24px;background:#eef1f5;border-radius:12px;overflow:auto}.fr125-pdf-page{position:relative;width:min(100%,1040px);aspect-ratio:210/297;background:#fff;box-shadow:0 4px 18px #0002;margin:0 auto}.fr125-pdf-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1;background:#fff}.fr125-pdf-overlay{z-index:2}.fr125-pdf-overlay{position:absolute;inset:0;pointer-events:none}.fr125-overlay-input,.fr125-overlay-check{position:absolute;z-index:3;pointer-events:auto}.fr125-overlay-input{border:0;border-bottom:1px solid #1d4ed8;background:rgba(255,255,210,.28);font-size:clamp(8px,1vw,12px);padding:0 2px;outline:none}.fr125-overlay-input:focus{background:#fff7b2;box-shadow:0 0 0 1px #1d4ed8}.fr125-overlay-check{width:1.15%;height:1.15%;margin:0;accent-color:#111}.fr125-pdf-overlay--locked{pointer-events:none}@media(max-width:700px){.fr125-pdf-workspace{align-items:flex-start;padding:10px}.fr125-pdf-page{width:900px;max-width:none}}@media print{.site-header,.hero,.panel:not(#work-permit-section),.wp-actions{display:none!important}.fr125-pdf-workspace{padding:0;background:#fff}.fr125-pdf-page{box-shadow:none;page-break-after:always;width:210mm;height:297mm}}`;document.head.appendChild(st);
 })();
