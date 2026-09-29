@@ -64,13 +64,13 @@ async function previewFilledPdf(){
     // Coordinates below are PDF points measured from the original A4 FR-125 (595 x 842 pt).
     // They are independent of browser zoom, screen size and PDF viewer scaling.
     const F={
-      workPermitNo:[427,775,105], writtenDate:[427,758,105],
-      workDate:[88,650,105], startTime:[257,650,75], endTime:[389,650,75],
-      description:[96,628,390], equipment:[84,607,235], area:[327,607,145],
-      carLicense:[103,543,290],
-      requester:[102,520,105], requesterPhone:[230,520,70], requesterCompany:[304,520,90],
-      jobOwner:[102,498,105], jobOwnerPhone:[230,498,70],
-      contractor:[102,476,105], contractorPhone:[230,476,70], contractorCompany:[304,476,90]
+      workPermitNo:[427,775,105], writtenDate:[427,754,105],
+      workDate:[88,704,105], startTime:[257,704,75], endTime:[389,704,75],
+      description:[96,682,390], equipment:[84,660,235], area:[327,660,145],
+      carLicense:[103,592,290],
+      requester:[102,570,105], requesterPhone:[230,570,70], requesterCompany:[304,570,90],
+      jobOwner:[102,548,105], jobOwnerPhone:[230,548,70],
+      contractor:[102,526,105], contractorPhone:[230,526,70], contractorCompany:[304,526,90]
     };
     const CHECK={
       permit:{
@@ -83,8 +83,8 @@ async function previewFilledPdf(){
         "งานซ่อมบำรุง":[96,562],"Security":[258,562],"อื่นๆ":[420,562]
       },
       docs:{
-        "JSA":[43,529],"Cer. จป.":[258,529],"รายชื่อผู้ปฏิบัติงาน":[43,513],
-        "แบบตรวจความปลอดภัยตามประเภทงานเสี่ยง":[258,513],"รายการเครื่องมือ/อุปกรณ์":[43,497],"SDS":[258,497]
+        "JSA":[43,449],"Cer. จป.":[258,449],"รายชื่อผู้ปฏิบัติงาน":[43,427],
+        "แบบตรวจความปลอดภัยตามประเภทงานเสี่ยง":[258,427],"รายการเครื่องมือ/อุปกรณ์":[43,405],"SDS":[258,405]
       }
     };
     const raster=async(value,maxWidth,fontPx=24)=>{
