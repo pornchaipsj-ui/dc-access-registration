@@ -8,6 +8,8 @@ function sync(){
   setText("wp-auto-date",val("visit-date"));
   setText("wp-auto-area",val("room"));
   setText("wp-auto-requester",[val("requester-name"),val("requester-company")].filter(Boolean).join(" / "));
+  setText("wp-rq-name",val("requester-name")); setText("wp-rq-phone",val("requester-phone")); setText("wp-rq-company",val("requester-company")); setText("wp-rq-dept",val("requester-department"));
+  setText("wp-owner-name",val("host-name")); setText("wp-owner-phone",val("host-phone"));
 }
 ["visit-date","room","requester-name","requester-company","objective","host-name","host-phone"].forEach(id=>byId(id)?.addEventListener("input",sync));
 document.querySelector("#work-area-picker")?.addEventListener("change",()=>setTimeout(sync,0)); sync();
@@ -40,6 +42,8 @@ function collect(){
     jobOwner:val("host-name"), jobOwnerPhone:val("host-phone"),
     contractor:val("wp-contractor-controller"), contractorPhone:val("wp-contractor-phone"),
     contractorCompany:val("wp-contractor-company"), contractorDepartment:val("wp-contractor-department"),
+    ppe:[["wp-ppe-helmet","หมวกนิรภัยพร้อมสายรัดคาง"],["wp-ppe-shoes","รองเท้านิรภัย"],["wp-ppe-head","ป้องกันศีรษะ"],["wp-ppe-hearing","ป้องกันการได้ยิน"],["wp-ppe-foot","ป้องกันเท้า"],["wp-ppe-eye","ใบหน้าและดวงตา"],["wp-ppe-respiratory","ระบบหายใจ"],["wp-ppe-fall","ป้องกันการตก"],["wp-ppe-hand","ป้องกันมือ"],["wp-ppe-body","ป้องกันร่างกาย"]].filter(x=>byId(x[0])?.checked).map(x=>x[1]),
+    requesterConfirmed:!!byId("wp-requester-confirm")?.checked,
     docs:[["wp-jsa","JSA"],["wp-supervisor-cert","Cer. จป."],["wp-personnel","รายชื่อผู้ปฏิบัติงาน"],["wp-risk-checklist","แบบตรวจความปลอดภัยตามประเภทงานเสี่ยง"],["wp-tools-list","รายการเครื่องมือ/อุปกรณ์"],["wp-sds","SDS"]].filter(x=>byId(x[0])?.checked).map(x=>x[1])
   };
 }
@@ -49,6 +53,7 @@ function validate(){
   for(const id of ["wp-work-type","wp-start-time","wp-end-time","wp-contractor-controller","wp-contractor-phone","wp-contractor-company"]){
     if(!val(id)){byId(id)?.focus();alert("กรุณากรอกข้อมูล Work Permit ให้ครบ");return false}
   }
+  if(!byId("wp-requester-confirm")?.checked){byId("wp-requester-confirm")?.focus();alert("กรุณายืนยันข้อมูล Permit Requester ในข้อ 1.7");return false}
   return true;
 }
 byId("wp-run-number")?.addEventListener("click",runNumber);
@@ -71,6 +76,6 @@ function previewHtml(){
 }
 byId("wp-preview")?.addEventListener("click",previewHtml);
 const st=document.createElement("style");st.textContent=`
-.wp-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 18px}.wp-summary>div{padding:12px;border:1px solid #dbe3ec;border-radius:10px;background:#f8fafc}.wp-summary small{display:block;color:#64748b;margin-bottom:4px}.wp-summary strong{word-break:break-word}.wp-subsection{border-top:1px solid #e5e7eb;padding-top:12px}.wp-subsection h3{margin:0 0 10px}.wp-checks{display:flex;flex-wrap:wrap;gap:10px 22px;border:1px solid #dbe3ec;border-radius:10px;padding:14px}.wp-checks label{display:flex;align-items:center;gap:7px}.wp-permit-types{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;border:1px solid #dbe3ec;border-radius:10px;padding:12px}.wp-permit-types label{display:flex;align-items:center;gap:7px;font-weight:400}.form-hint{color:#64748b;font-size:.9rem;margin-top:10px}@media(max-width:760px){.wp-summary{grid-template-columns:1fr 1fr}}`;document.head.appendChild(st);
+.wp-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 16px}.wp-summary>div,.wp-readonly-grid>div{padding:11px;border:1px solid #dbe3ec;border-radius:9px;background:#f8fafc}.wp-summary small,.wp-readonly-grid small{display:block;color:#64748b;margin-bottom:3px}.wp-summary strong,.wp-readonly-grid strong{word-break:break-word}.wp-card{border:1px solid #dbe3ec;border-radius:12px;padding:16px;margin:12px 0;background:#fff}.wp-card h3{margin:0 0 13px;font-size:1rem}.wp-card h3 span,.wp-group-title small{font-weight:400;color:#64748b;font-size:.82rem}.wp-permit-types{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px 14px;margin-bottom:15px}.wp-group-title{grid-column:1/-1;font-weight:700;margin-bottom:2px}.wp-permit-types label,.wp-doc-grid label,.wp-confirm{display:flex;align-items:center;gap:8px;font-weight:400}.wp-permit-types input,.wp-doc-grid input,.wp-confirm input{width:18px;height:18px;flex:0 0 18px}.wp-grid-4,.wp-readonly-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.wp-doc-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px 18px}.form-hint{color:#64748b;font-size:.9rem;margin-top:10px}@media(max-width:900px){.wp-permit-types,.wp-doc-grid{grid-template-columns:repeat(2,1fr)}.wp-grid-4,.wp-readonly-grid,.wp-summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.wp-permit-types,.wp-doc-grid,.wp-grid-4,.wp-readonly-grid,.wp-summary{grid-template-columns:1fr}}`;document.head.appendChild(st);
 window.WorkPermitForm={collect,validate,runNumber,syncAttendees};
 })();
