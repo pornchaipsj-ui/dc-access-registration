@@ -65,18 +65,18 @@ async function previewFilledPdf(){
     // They are independent of browser zoom, screen size and PDF viewer scaling.
     const F={
       workPermitNo:[427,775,105], writtenDate:[427,754,105],
-      workDate:[88,704,105], startTime:[257,704,75], endTime:[389,704,75],
-      description:[96,682,390], equipment:[84,660,235], area:[327,660,145],
-      carLicense:[103,592,290],
-      requester:[102,570,105], requesterPhone:[230,570,70], requesterCompany:[304,570,90],
-      jobOwner:[102,548,105], jobOwnerPhone:[230,548,70],
-      contractor:[102,526,105], contractorPhone:[230,526,70], contractorCompany:[304,526,90]
+      workDate:[88,681,105], startTime:[257,681,75], endTime:[389,681,75],
+      description:[96,659,390], equipment:[84,637,235], area:[327,637,145],
+      carLicense:[103,569,290],
+      requester:[102,547,105], requesterPhone:[230,547,70], requesterCompany:[304,547,90],
+      jobOwner:[102,525,105], jobOwnerPhone:[230,525,70],
+      contractor:[102,503,105], contractorPhone:[230,503,70], contractorCompany:[304,503,90]
     };
     const CHECK={
       permit:{
-        "งานทั่วไป":[64,716],"งานในพื้นที่อับอากาศ":[170,716],"งานบนที่สูง > 1.8 m.":[278,716],
-        "งานขุด":[384,716],"งานที่เกี่ยวข้องกับรังสี":[491,716],
-        "Hot Work":[64,694],"งานยก (Mobile Crane)":[170,694],"งานไฟฟ้า":[278,694],"อื่นๆ":[384,694]
+        "งานทั่วไป":[62,710],"งานในพื้นที่อับอากาศ":[168,710],"งานบนที่สูง > 1.8 m.":[276,710],
+        "งานขุด":[382,710],"งานที่เกี่ยวข้องกับรังสี":[489,710],
+        "Hot Work":[62,688],"งานยก (Mobile Crane)":[168,688],"งานไฟฟ้า":[276,688],"อื่นๆ":[382,688]
       },
       work:{
         "งานก่อสร้าง":[96,584],"ระบบภายในอาคาร":[258,584],"งานจัดการอาคาร":[420,584],
