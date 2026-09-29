@@ -264,6 +264,7 @@ try {
       }
 
       parsedAttendees = attendees;
+      window.WorkPermitForm?.syncAttendees?.(parsedAttendees);
       renderPreview();
     } catch (error) {
       fileStatus.hidden = true;
@@ -339,6 +340,7 @@ try {
     return {
       id: data.id,
       request_code: data.request_code,
+      work_permit_no: data.work_permit_no,
       status: data.status || "pending"
     };
   }
@@ -351,6 +353,7 @@ try {
         <div>
           <h2>ส่ง StaffTemplate เรียบร้อย</h2>
           <p>เลขที่คำขอ: <strong>${escapeHtml(record.request_code)}</strong></p>
+          <p>Work Permit No.: <strong>${escapeHtml(record.work_permit_no || "-")}</strong></p>
           <p>สถานะเริ่มต้น: <span class="status status--pending">รอตรวจสอบ</span></p>
           <p>รปภ. สามารถบันทึก Card no. TIDC และเวลาเข้า–ออกจริงในหน้า Security Dashboard</p>
           ${demoMode ? "<p class=\"notice\">โหมดทดลอง: ข้อมูลอยู่เฉพาะในเบราว์เซอร์เครื่องนี้</p>" : ""}
@@ -394,6 +397,7 @@ try {
     submitButton.disabled = true;
     submitButton.textContent = "กำลังส่งข้อมูล…";
     try {
+      if (window.WorkPermitForm?.validate && !window.WorkPermitForm.validate()) return;
       const request = collectRequest();
       const result = await submitRequest(request, parsedAttendees);
       showResult(result);
