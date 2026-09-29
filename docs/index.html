@@ -64,59 +64,30 @@
 
 
       <section class="panel" id="work-permit-section">
-  <div class="panel__header"><div><h2>2. ข้อมูล Work Permit / FR-125</h2><p>ส่วนที่ 1 — Permit Requester · ข้อมูลที่มีใน Access Registration จะดึงให้อัตโนมัติ</p></div><span class="badge">FR-125-v03 (TH)</span></div>
-  <div class="wp-summary">
-    <div><small>Work Permit No.</small><strong id="wp-number-display">ยังไม่ได้รันเลข</strong></div>
-    <div><small>วันที่ทำงาน</small><strong id="wp-auto-date">-</strong></div>
-    <div><small>พื้นที่</small><strong id="wp-auto-area">-</strong></div>
-    <div><small>Permit Requester</small><strong id="wp-auto-requester">-</strong></div>
-  </div>
-
-  <div class="wp-card"><h3>1.1 รายละเอียดงาน / Work Details</h3>
-    <div class="wp-permit-types"><div class="wp-group-title">ประเภทใบอนุญาต / Permit Type * <small>เลือกได้มากกว่า 1</small></div>
-      <label><input type="checkbox" name="wp-permit-type" value="งานทั่วไป"> งานทั่วไป / General Work</label>
-      <label><input type="checkbox" name="wp-permit-type" value="งานในพื้นที่อับอากาศ"> งานในพื้นที่อับอากาศ / Confined Space</label>
-      <label><input type="checkbox" name="wp-permit-type" value="งานบนที่สูง > 1.8 m."> งานบนที่สูง &gt; 1.8 m.</label>
-      <label><input type="checkbox" name="wp-permit-type" value="งานขุด"> งานขุด / Excavation</label>
-      <label><input type="checkbox" name="wp-permit-type" value="งานที่เกี่ยวข้องกับรังสี"> งานที่เกี่ยวข้องกับรังสี / Radiation</label>
-      <label><input type="checkbox" name="wp-permit-type" value="Hot Work"> Hot Work</label>
-      <label><input type="checkbox" name="wp-permit-type" value="งานยก (Mobile Crane)"> งานยก / Lifting (Mobile Crane)</label>
-      <label><input type="checkbox" name="wp-permit-type" value="งานไฟฟ้า"> งานไฟฟ้า / Electrical Work</label>
-      <label><input type="checkbox" name="wp-permit-type" value="อื่นๆ"> อื่นๆ / Other</label>
-    </div>
-    <div class="wp-grid-4">
-      <div class="wp-type-work"><span>ประเภทของงาน / Type of Work *</span><label><input type="checkbox" name="wp-work-type" value="งานก่อสร้าง"> งานก่อสร้าง</label><label><input type="checkbox" name="wp-work-type" value="ระบบภายในอาคาร"> ระบบภายในอาคาร</label><label><input type="checkbox" name="wp-work-type" value="งานจัดการอาคาร"> งานจัดการอาคาร</label><label><input type="checkbox" name="wp-work-type" value="งานซ่อมบำรุง"> งานซ่อมบำรุง</label><label><input type="checkbox" name="wp-work-type" value="Security"> Security</label><label><input type="checkbox" name="wp-work-type" value="อื่นๆ"> อื่นๆ</label></div>
-      <label>เริ่มต้นเวลา / Start Time *<input id="wp-start-time" type="time" required></label>
-      <label>ถึงเวลา / End Time *<input id="wp-end-time" type="time" required></label>
-      <label>ชื่ออุปกรณ์ / Equipment<input id="wp-equipment" type="text" maxlength="200"></label>
-    </div>
-  </div>
-
-  <div class="wp-card"><h3>1.2 Permit Requester <span>ดึงจาก Access Registration</span></h3><div class="wp-readonly-grid">
-    <div><small>ชื่อ-สกุล</small><strong id="wp-rq-name">-</strong></div><div><small>โทรศัพท์</small><strong id="wp-rq-phone">-</strong></div><div><small>บริษัท</small><strong id="wp-rq-company">-</strong></div><div><small>หน่วยงาน</small><strong id="wp-rq-dept">-</strong></div>
-  </div></div>
-
-  <div class="wp-card"><h3>1.3 เจ้าของงาน / TIDC Job Controller <span>ดึงจาก Host</span></h3><div class="wp-readonly-grid">
-    <div><small>ชื่อ-สกุล</small><strong id="wp-owner-name">-</strong></div><div><small>โทรศัพท์</small><strong id="wp-owner-phone">-</strong></div><div><small>บริษัท</small><strong id="wp-owner-company">TIDC</strong></div><div><small>หน่วยงาน</small><strong id="wp-owner-dept">-</strong></div>
-  </div></div>
-
-  <div class="wp-card"><h3>1.4 Contractor Job Controller</h3><div class="wp-grid-4">
-    <label>ชื่อ-สกุล *<input id="wp-contractor-controller" type="text" required></label><label>โทรศัพท์ *<input id="wp-contractor-phone" type="tel" required></label><label>บริษัท *<input id="wp-contractor-company" type="text" required></label><label>หน่วยงาน<input id="wp-contractor-department" type="text"></label>
-  </div></div>
-
-  <div class="wp-card"><h3>1.5 เอกสารประกอบการขออนุญาต / Supporting Documents</h3><div class="wp-doc-grid">
-    <label><input id="wp-jsa" type="checkbox"> JSA</label><label><input id="wp-supervisor-cert" type="checkbox"> Cer. จป. ระดับหัวหน้างานขึ้นไป</label><label><input id="wp-personnel" type="checkbox"> รายชื่อผู้ปฏิบัติงาน <span id="wp-personnel-count" class="wp-count">0 คน</span></label><label><input id="wp-risk-checklist" type="checkbox"> แบบตรวจความปลอดภัยตามประเภทงานเสี่ยง</label><label><input id="wp-tools-list" type="checkbox"> รายการเครื่องมือ/อุปกรณ์</label><label><input id="wp-sds" type="checkbox"> SDS (ถ้ามี)</label>
-  </div></div>
-
-  <div class="wp-card"><h3>1.6 PPE พื้นฐานและ PPE ตามความเสี่ยง</h3><div class="wp-doc-grid">
-    <label><input id="wp-ppe-helmet" type="checkbox" checked> หมวกนิรภัยพร้อมสายรัดคาง</label><label><input id="wp-ppe-shoes" type="checkbox" checked> รองเท้านิรภัย</label>
-    <label><input id="wp-ppe-head" type="checkbox"> ป้องกันศีรษะ <input id="wp-ppe-head-note" class="wp-inline-note" placeholder="ระบุ"></label><label><input id="wp-ppe-hearing" type="checkbox"> ป้องกันการได้ยิน <input id="wp-ppe-hearing-note" class="wp-inline-note" placeholder="ระบุ"></label><label><input id="wp-ppe-foot" type="checkbox"> ป้องกันเท้า <input id="wp-ppe-foot-note" class="wp-inline-note" placeholder="ระบุ"></label><label><input id="wp-ppe-eye" type="checkbox"> ใบหน้าและดวงตา <input id="wp-ppe-eye-note" class="wp-inline-note" placeholder="ระบุ"></label><label><input id="wp-ppe-respiratory" type="checkbox"> ระบบหายใจ <input id="wp-ppe-respiratory-note" class="wp-inline-note" placeholder="ระบุ"></label><label><input id="wp-ppe-fall" type="checkbox"> ป้องกันการตก <input id="wp-ppe-fall-note" class="wp-inline-note" placeholder="ระบุ"></label><label><input id="wp-ppe-hand" type="checkbox"> ป้องกันมือ <input id="wp-ppe-hand-note" class="wp-inline-note" placeholder="ระบุ"></label><label><input id="wp-ppe-body" type="checkbox"> ป้องกันร่างกาย <input id="wp-ppe-body-note" class="wp-inline-note" placeholder="ระบุ"></label>
-  </div></div>
-
-  <div class="wp-card"><h3>1.7 Permit Requester Confirmation</h3><label class="wp-confirm"><input id="wp-requester-confirm" type="checkbox"> ยืนยันว่าข้อมูลและเอกสารประกอบถูกต้อง และจะปฏิบัติตามมาตรการความปลอดภัย</label></div>
-  <div class="form-actions wp-actions"><button id="wp-run-number" class="button" type="button">Run Work Permit No. / รันเลข Work Permit</button><button id="wp-preview" class="button button--secondary" type="button">Preview FR-125</button></div>
-  <p class="form-hint">Scope, Area, วันที่, Permit Requester, Job Owner และทะเบียนรถ ดึงจากข้อมูลด้านบน/FR-333 อัตโนมัติ</p>
-</section>
+        <div class="panel__header">
+          <div>
+            <h2>2. ใบขออนุญาตปฏิบัติงาน / Work Permit (FR-125)</h2>
+            <p>ใช้แบบฟอร์มต้นฉบับ Sheet “FR-125-v03 (TH)” และกรอกข้อมูลลงบนตำแหน่งเดิมของเอกสาร</p>
+          </div>
+          <span class="badge">FR-125-v03 (TH)</span>
+        </div>
+        <div id="fr125-pdf-workspace" class="fr125-pdf-workspace">
+          <div class="fr125-pdf-page" data-page="1">
+            <canvas class="fr125-pdf-canvas" data-pdf-page="1"></canvas>
+            <div id="fr125-overlay-page1" class="fr125-pdf-overlay"></div>
+          </div>
+          <div class="fr125-pdf-page" data-page="2">
+            <canvas class="fr125-pdf-canvas" data-pdf-page="2"></canvas>
+            <div id="fr125-overlay-page2" class="fr125-pdf-overlay fr125-pdf-overlay--locked"></div>
+          </div>
+        </div>
+        <div class="form-actions wp-actions">
+          <button id="wp-run-number" class="button" type="button">Run Work Permit No. / รันเลข Work Permit</button>
+          <span id="wp-number-status" class="badge">ยังไม่ได้รันเลข</span>
+          <button id="wp-preview" class="button button--secondary" type="button">Preview FR-125 / ตรวจสอบเอกสาร</button>
+          <button id="wp-print" class="button button--secondary" type="button">Print FR-125 / พิมพ์เอกสาร</button>
+        </div>
+      </section>
 
       <section class="panel">
         <div class="panel__header">
@@ -163,8 +134,7 @@
   <script src="./assets/fr333.js?v=1" defer></script>
   <script src="./assets/fr333-registration.js?v=1" defer></script>
   <script src="./assets/work-area-multiselect.js?v=2" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" defer></script>
-<script src="./assets/work-permit.js?v=17" defer></script>
+  <script src="./assets/work-permit.js?v=18" defer></script>
   <script src="./assets/app.js?v=26" defer></script>
 </body>
 </html>
