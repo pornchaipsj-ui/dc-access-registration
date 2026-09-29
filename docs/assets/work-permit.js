@@ -3,6 +3,27 @@
 const workspace=document.querySelector("#fr125-pdf-workspace"); if(!workspace)return;
 const $=s=>document.querySelector(s), byId=id=>document.getElementById(id);
 const overlay=byId("fr125-overlay-page1");
+async function renderPdfBackground(){
+  try{
+    if(!window.pdfjsLib){
+      await window.AccessApp.loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
+    }
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    const pdf=await window.pdfjsLib.getDocument("./assets/FR-125-v03%20Work%20Permit-1.pdf").promise;
+    for(const canvas of document.querySelectorAll(".fr125-pdf-canvas")){
+      const page=await pdf.getPage(Number(canvas.dataset.pdfPage));
+      const base=page.getViewport({scale:1});
+      const target=1040;
+      const viewport=page.getViewport({scale:target/base.width});
+      canvas.width=viewport.width; canvas.height=viewport.height;
+      await page.render({canvasContext:canvas.getContext("2d"),viewport}).promise;
+    }
+  }catch(e){
+    console.error("FR-125 PDF render failed",e);
+    workspace.insertAdjacentHTML("afterbegin",'<div class="file-status file-status--error">ไม่สามารถแสดง FR-125 PDF ได้ กรุณารีเฟรชหน้า</div>');
+  }
+}
+renderPdfBackground();
 let workPermitNo="";
 const no=document.createElement("input");no.id="wp-work-permit-no";no.readOnly=true;no.placeholder="Run Work Permit No.";no.className="fr125-overlay-input fr125-overlay-number";Object.assign(no.style,{left:"73%",top:"4.2%",width:"21%",height:"2.3%"});overlay.appendChild(no);
 const fields=[
@@ -35,5 +56,5 @@ function preview(printNow=false){if(!valid())return;const w=window.open("./asset
 window.WorkPermitForm={collect,validate:valid,preview:()=>preview(false),print:()=>preview(true),runNumber,syncAttendees};
 byId("wp-preview")?.addEventListener("click",()=>preview(false));byId("wp-print")?.addEventListener("click",()=>preview(true));
 const st=document.createElement("style");st.textContent=`
-.fr125-pdf-workspace{display:flex;flex-direction:column;align-items:center;gap:28px;padding:24px;background:#eef1f5;border-radius:12px;overflow:auto}.fr125-pdf-page{position:relative;width:min(100%,1040px);aspect-ratio:210/297;background:#fff;box-shadow:0 4px 18px #0002;margin:0 auto}.fr125-pdf-object{position:absolute;inset:0;width:100%;height:100%;border:0}.fr125-pdf-overlay{position:absolute;inset:0;pointer-events:none}.fr125-overlay-input,.fr125-overlay-check{position:absolute;z-index:3;pointer-events:auto}.fr125-overlay-input{border:0;border-bottom:1px solid #1d4ed8;background:rgba(255,255,210,.55);font-size:clamp(8px,1vw,12px);padding:0 2px;outline:none}.fr125-overlay-input:focus{background:#fff7b2;box-shadow:0 0 0 1px #1d4ed8}.fr125-overlay-check{width:1.45%;height:1.45%;margin:0;accent-color:#111}.fr125-pdf-overlay--locked{pointer-events:none}@media(max-width:700px){.fr125-pdf-workspace{align-items:flex-start;padding:10px}.fr125-pdf-page{width:900px;max-width:none}}@media print{.site-header,.hero,.panel:not(#work-permit-section),.wp-actions{display:none!important}.fr125-pdf-workspace{padding:0;background:#fff}.fr125-pdf-page{box-shadow:none;page-break-after:always;width:210mm;height:297mm}}`;document.head.appendChild(st);
+.fr125-pdf-workspace{display:flex;flex-direction:column;align-items:center;gap:28px;padding:24px;background:#eef1f5;border-radius:12px;overflow:auto}.fr125-pdf-page{position:relative;width:min(100%,1040px);aspect-ratio:210/297;background:#fff;box-shadow:0 4px 18px #0002;margin:0 auto}.fr125-pdf-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}.fr125-pdf-overlay{position:absolute;inset:0;pointer-events:none}.fr125-overlay-input,.fr125-overlay-check{position:absolute;z-index:3;pointer-events:auto}.fr125-overlay-input{border:0;border-bottom:1px solid #1d4ed8;background:rgba(255,255,210,.55);font-size:clamp(8px,1vw,12px);padding:0 2px;outline:none}.fr125-overlay-input:focus{background:#fff7b2;box-shadow:0 0 0 1px #1d4ed8}.fr125-overlay-check{width:1.45%;height:1.45%;margin:0;accent-color:#111}.fr125-pdf-overlay--locked{pointer-events:none}@media(max-width:700px){.fr125-pdf-workspace{align-items:flex-start;padding:10px}.fr125-pdf-page{width:900px;max-width:none}}@media print{.site-header,.hero,.panel:not(#work-permit-section),.wp-actions{display:none!important}.fr125-pdf-workspace{padding:0;background:#fff}.fr125-pdf-page{box-shadow:none;page-break-after:always;width:210mm;height:297mm}}`;document.head.appendChild(st);
 })();
