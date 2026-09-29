@@ -51,7 +51,11 @@ function validate(){
   return true;
 }
 byId("wp-run-number")?.addEventListener("click",runNumber);
-byId("wp-preview")?.addEventListener("click",()=>window.open("./assets/FR-125-v03%20Work%20Permit-1.pdf","_blank"));
+byId("wp-preview")?.addEventListener("click",()=>{
+  const url=new URL("./assets/FR-125-v03%20Work%20Permit-1.pdf",window.location.href).href;
+  const w=window.open(url,"_blank");
+  if(!w) window.location.href=url;
+});
 const st=document.createElement("style");st.textContent=`
 .wp-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 18px}.wp-summary>div{padding:12px;border:1px solid #dbe3ec;border-radius:10px;background:#f8fafc}.wp-summary small{display:block;color:#64748b;margin-bottom:4px}.wp-summary strong{word-break:break-word}.wp-subsection{border-top:1px solid #e5e7eb;padding-top:12px}.wp-subsection h3{margin:0 0 10px}.wp-checks{display:flex;flex-wrap:wrap;gap:10px 22px;border:1px solid #dbe3ec;border-radius:10px;padding:14px}.wp-checks label{display:flex;align-items:center;gap:7px}.form-hint{color:#64748b;font-size:.9rem;margin-top:10px}@media(max-width:760px){.wp-summary{grid-template-columns:1fr 1fr}}`;document.head.appendChild(st);
 window.WorkPermitForm={collect,validate,runNumber,syncAttendees};
