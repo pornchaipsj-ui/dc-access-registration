@@ -64,30 +64,66 @@
 
 
       <section class="panel" id="work-permit-section">
-        <div class="panel__header">
-          <div>
-            <h2>2. ใบขออนุญาตปฏิบัติงาน / Work Permit (FR-125)</h2>
-            <p>ใช้แบบฟอร์มต้นฉบับ Sheet “FR-125-v03 (TH)” และกรอกข้อมูลลงบนตำแหน่งเดิมของเอกสาร</p>
-          </div>
-          <span class="badge">FR-125-v03 (TH)</span>
-        </div>
-        <div id="fr125-pdf-workspace" class="fr125-pdf-workspace">
-          <div class="fr125-pdf-page" data-page="1">
-            <canvas class="fr125-pdf-canvas" data-pdf-page="1"></canvas>
-            <div id="fr125-overlay-page1" class="fr125-pdf-overlay"></div>
-          </div>
-          <div class="fr125-pdf-page" data-page="2">
-            <canvas class="fr125-pdf-canvas" data-pdf-page="2"></canvas>
-            <div id="fr125-overlay-page2" class="fr125-pdf-overlay fr125-pdf-overlay--locked"></div>
-          </div>
-        </div>
-        <div class="form-actions wp-actions">
-          <button id="wp-run-number" class="button" type="button">Run Work Permit No. / รันเลข Work Permit</button>
-          <span id="wp-number-status" class="badge">ยังไม่ได้รันเลข</span>
-          <button id="wp-preview" class="button button--secondary" type="button">Preview FR-125 / ตรวจสอบเอกสาร</button>
-          <button id="wp-print" class="button button--secondary" type="button">Print FR-125 / พิมพ์เอกสาร</button>
-        </div>
-      </section>
+  <div class="panel__header">
+    <div>
+      <h2>2. ข้อมูล Work Permit / FR-125</h2>
+      <p>กรอกเฉพาะข้อมูลที่ยังไม่มีใน Access Registration ส่วนข้อมูลซ้ำระบบจะดึงให้อัตโนมัติ</p>
+    </div>
+    <span class="badge">FR-125-v03 (TH)</span>
+  </div>
+
+  <div class="wp-summary">
+    <div><small>Work Permit No.</small><strong id="wp-number-display">ยังไม่ได้รันเลข</strong></div>
+    <div><small>วันที่ทำงาน</small><strong id="wp-auto-date">-</strong></div>
+    <div><small>พื้นที่</small><strong id="wp-auto-area">-</strong></div>
+    <div><small>Permit Requester</small><strong id="wp-auto-requester">-</strong></div>
+  </div>
+
+  <div class="form-grid">
+    <label>ประเภทใบอนุญาต / Permit Type *
+      <select id="wp-permit-type" required>
+        <option value="">เลือกประเภท</option>
+        <option>งานทั่วไป</option><option>งานในพื้นที่อับอากาศ</option><option>งานบนที่สูง &gt; 1.8 m.</option>
+        <option>งานขุด</option><option>งานที่เกี่ยวข้องกับรังสี</option><option>Hot Work</option>
+        <option>งานยก (Mobile Crane)</option><option>งานไฟฟ้า</option><option>อื่นๆ</option>
+      </select>
+    </label>
+    <label>ประเภทของงาน / Type of Work *
+      <select id="wp-work-type" required>
+        <option value="">เลือกประเภทงาน</option><option>งานก่อสร้าง</option><option>ระบบภายในอาคาร</option>
+        <option>งานจัดการอาคาร</option><option>งานซ่อมบำรุง</option><option>Security</option><option>อื่นๆ</option>
+      </select>
+    </label>
+    <label>เริ่มต้นเวลา / Start Time *<input id="wp-start-time" type="time" required></label>
+    <label>ถึงเวลา / End Time *<input id="wp-end-time" type="time" required></label>
+    <label class="span-2">ชื่ออุปกรณ์ / Equipment<input id="wp-equipment" type="text" maxlength="200"></label>
+
+    <div class="span-4 wp-subsection">
+      <h3>Contractor Job Controller</h3>
+      <div class="form-grid">
+        <label>ชื่อ-สกุล *<input id="wp-contractor-controller" type="text" required></label>
+        <label>โทรศัพท์ *<input id="wp-contractor-phone" type="tel" required></label>
+        <label>บริษัท *<input id="wp-contractor-company" type="text" required></label>
+        <label>หน่วยงาน<input id="wp-contractor-department" type="text"></label>
+      </div>
+    </div>
+
+    <fieldset class="span-4 wp-checks"><legend>เอกสารประกอบการขออนุญาต / Supporting Documents</legend>
+      <label><input id="wp-jsa" type="checkbox"> JSA</label>
+      <label><input id="wp-supervisor-cert" type="checkbox"> Cer. จป. ระดับหัวหน้างานขึ้นไป</label>
+      <label><input id="wp-personnel" type="checkbox"> รายชื่อผู้ปฏิบัติงาน</label>
+      <label><input id="wp-risk-checklist" type="checkbox"> แบบตรวจความปลอดภัยตามประเภทงานเสี่ยง</label>
+      <label><input id="wp-tools-list" type="checkbox"> รายการเครื่องมือ/อุปกรณ์</label>
+      <label><input id="wp-sds" type="checkbox"> SDS (ถ้ามี)</label>
+    </fieldset>
+  </div>
+
+  <div class="form-actions wp-actions">
+    <button id="wp-run-number" class="button" type="button">Run Work Permit No. / รันเลข Work Permit</button>
+    <button id="wp-preview" class="button button--secondary" type="button">Preview Original FR-125</button>
+  </div>
+  <p class="form-hint">วันที่, Scope, Area, Permit Requester, Job Owner และทะเบียนรถจะดึงจากข้อมูลด้านบน/FR-333 อัตโนมัติ ไม่ต้องกรอกซ้ำ</p>
+</section>
 
       <section class="panel">
         <div class="panel__header">
@@ -134,7 +170,7 @@
   <script src="./assets/fr333.js?v=1" defer></script>
   <script src="./assets/fr333-registration.js?v=1" defer></script>
   <script src="./assets/work-area-multiselect.js?v=2" defer></script>
-  <script src="./assets/work-permit.js?v=7" defer></script>
+  <script src="./assets/work-permit.js?v=8" defer></script>
   <script src="./assets/app.js?v=26" defer></script>
   <script src="./assets/registration-pause.js?v=2" defer></script>
 </body>
