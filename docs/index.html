@@ -85,7 +85,7 @@
       <label><input type="checkbox" name="wp-permit-type" value="อื่นๆ"> อื่นๆ / Other</label>
     </div>
     <div class="wp-grid-4">
-      <label>ประเภทของงาน / Type of Work *<select id="wp-work-type" required><option value="">เลือกประเภทงาน</option><option>งานก่อสร้าง</option><option>ระบบภายในอาคาร</option><option>งานจัดการอาคาร</option><option>งานซ่อมบำรุง</option><option>Security</option><option>อื่นๆ</option></select></label>
+      <div class="wp-type-work"><span>ประเภทของงาน / Type of Work *</span><label><input type="checkbox" name="wp-work-type" value="งานก่อสร้าง"> งานก่อสร้าง</label><label><input type="checkbox" name="wp-work-type" value="ระบบภายในอาคาร"> ระบบภายในอาคาร</label><label><input type="checkbox" name="wp-work-type" value="งานจัดการอาคาร"> งานจัดการอาคาร</label><label><input type="checkbox" name="wp-work-type" value="งานซ่อมบำรุง"> งานซ่อมบำรุง</label><label><input type="checkbox" name="wp-work-type" value="Security"> Security</label><label><input type="checkbox" name="wp-work-type" value="อื่นๆ"> อื่นๆ</label></div>
       <label>เริ่มต้นเวลา / Start Time *<input id="wp-start-time" type="time" required></label>
       <label>ถึงเวลา / End Time *<input id="wp-end-time" type="time" required></label>
       <label>ชื่ออุปกรณ์ / Equipment<input id="wp-equipment" type="text" maxlength="200"></label>
@@ -105,12 +105,12 @@
   </div></div>
 
   <div class="wp-card"><h3>1.5 เอกสารประกอบการขออนุญาต / Supporting Documents</h3><div class="wp-doc-grid">
-    <label><input id="wp-jsa" type="checkbox"> JSA</label><label><input id="wp-supervisor-cert" type="checkbox"> Cer. จป. ระดับหัวหน้างานขึ้นไป</label><label><input id="wp-personnel" type="checkbox"> รายชื่อผู้ปฏิบัติงาน</label><label><input id="wp-risk-checklist" type="checkbox"> แบบตรวจความปลอดภัยตามประเภทงานเสี่ยง</label><label><input id="wp-tools-list" type="checkbox"> รายการเครื่องมือ/อุปกรณ์</label><label><input id="wp-sds" type="checkbox"> SDS (ถ้ามี)</label>
+    <label><input id="wp-jsa" type="checkbox"> JSA</label><label><input id="wp-supervisor-cert" type="checkbox"> Cer. จป. ระดับหัวหน้างานขึ้นไป</label><label><input id="wp-personnel" type="checkbox"> รายชื่อผู้ปฏิบัติงาน <span id="wp-personnel-count" class="wp-count">0 คน</span></label><label><input id="wp-risk-checklist" type="checkbox"> แบบตรวจความปลอดภัยตามประเภทงานเสี่ยง</label><label><input id="wp-tools-list" type="checkbox"> รายการเครื่องมือ/อุปกรณ์</label><label><input id="wp-sds" type="checkbox"> SDS (ถ้ามี)</label>
   </div></div>
 
   <div class="wp-card"><h3>1.6 PPE พื้นฐานและ PPE ตามความเสี่ยง</h3><div class="wp-doc-grid">
     <label><input id="wp-ppe-helmet" type="checkbox" checked> หมวกนิรภัยพร้อมสายรัดคาง</label><label><input id="wp-ppe-shoes" type="checkbox" checked> รองเท้านิรภัย</label>
-    <label><input id="wp-ppe-head" type="checkbox"> ป้องกันศีรษะ</label><label><input id="wp-ppe-hearing" type="checkbox"> ป้องกันการได้ยิน</label><label><input id="wp-ppe-foot" type="checkbox"> ป้องกันเท้า</label><label><input id="wp-ppe-eye" type="checkbox"> ใบหน้าและดวงตา</label><label><input id="wp-ppe-respiratory" type="checkbox"> ระบบหายใจ</label><label><input id="wp-ppe-fall" type="checkbox"> ป้องกันการตก</label><label><input id="wp-ppe-hand" type="checkbox"> ป้องกันมือ</label><label><input id="wp-ppe-body" type="checkbox"> ป้องกันร่างกาย</label>
+    <label><input id="wp-ppe-head" type="checkbox"> ป้องกันศีรษะ <input id="wp-ppe-head-note" class="wp-inline-note" placeholder="ระบุ"></label><label><input id="wp-ppe-hearing" type="checkbox"> ป้องกันการได้ยิน <input id="wp-ppe-hearing-note" class="wp-inline-note" placeholder="ระบุ"></label><label><input id="wp-ppe-foot" type="checkbox"> ป้องกันเท้า <input id="wp-ppe-foot-note" class="wp-inline-note" placeholder="ระบุ"></label><label><input id="wp-ppe-eye" type="checkbox"> ใบหน้าและดวงตา <input id="wp-ppe-eye-note" class="wp-inline-note" placeholder="ระบุ"></label><label><input id="wp-ppe-respiratory" type="checkbox"> ระบบหายใจ <input id="wp-ppe-respiratory-note" class="wp-inline-note" placeholder="ระบุ"></label><label><input id="wp-ppe-fall" type="checkbox"> ป้องกันการตก <input id="wp-ppe-fall-note" class="wp-inline-note" placeholder="ระบุ"></label><label><input id="wp-ppe-hand" type="checkbox"> ป้องกันมือ <input id="wp-ppe-hand-note" class="wp-inline-note" placeholder="ระบุ"></label><label><input id="wp-ppe-body" type="checkbox"> ป้องกันร่างกาย <input id="wp-ppe-body-note" class="wp-inline-note" placeholder="ระบุ"></label>
   </div></div>
 
   <div class="wp-card"><h3>1.7 Permit Requester Confirmation</h3><label class="wp-confirm"><input id="wp-requester-confirm" type="checkbox"> ยืนยันว่าข้อมูลและเอกสารประกอบถูกต้อง และจะปฏิบัติตามมาตรการความปลอดภัย</label></div>
@@ -164,7 +164,7 @@
   <script src="./assets/fr333-registration.js?v=1" defer></script>
   <script src="./assets/work-area-multiselect.js?v=2" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" defer></script>
-<script src="./assets/work-permit.js?v=16" defer></script>
+<script src="./assets/work-permit.js?v=17" defer></script>
   <script src="./assets/app.js?v=26" defer></script>
 </body>
 </html>
