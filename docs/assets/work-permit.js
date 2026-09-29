@@ -33,7 +33,7 @@ function collect(){
     workPermitNo,
     startDate:val("visit-date"), endDate:val("visit-end-date"),
     startTime:val("wp-start-time"), endTime:val("wp-end-time"),
-    permitType:val("wp-permit-type"), workType:val("wp-work-type"),
+    permitTypes:[...document.querySelectorAll('input[name="wp-permit-type"]:checked')].map(e=>e.value), workType:val("wp-work-type"),
     description:val("objective"), equipment:val("wp-equipment"), area:val("room"),
     carLicense:cars.join(" / "),
     requester:val("requester-name"), requesterPhone:val("requester-phone"), requesterCompany:val("requester-company"),
@@ -45,7 +45,8 @@ function collect(){
 }
 function validate(){
   if(!workPermitNo){alert("กรุณากด Run Work Permit No. ก่อน Submit");byId("wp-run-number")?.focus();return false}
-  for(const id of ["wp-permit-type","wp-work-type","wp-start-time","wp-end-time","wp-contractor-controller","wp-contractor-phone","wp-contractor-company"]){
+  if(!document.querySelector('input[name="wp-permit-type"]:checked')){alert("กรุณาเลือกประเภทใบอนุญาตอย่างน้อย 1 ประเภท");return false}
+  for(const id of ["wp-work-type","wp-start-time","wp-end-time","wp-contractor-controller","wp-contractor-phone","wp-contractor-company"]){
     if(!val(id)){byId(id)?.focus();alert("กรุณากรอกข้อมูล Work Permit ให้ครบ");return false}
   }
   return true;
@@ -63,23 +64,23 @@ async function previewFilledPdf(){
     // Coordinates below are PDF points measured from the original A4 FR-125 (595 x 842 pt).
     // They are independent of browser zoom, screen size and PDF viewer scaling.
     const F={
-      workPermitNo:[405,778,115], writtenDate:[405,765,115],
-      workDate:[88,686,105], startTime:[257,686,75], endTime:[389,686,75],
-      description:[96,672,390], equipment:[84,658,235], area:[327,658,145],
-      carLicense:[103,609,290],
-      requester:[102,594,105], requesterPhone:[230,594,70], requesterCompany:[304,594,90],
-      jobOwner:[102,579,105], jobOwnerPhone:[230,579,70],
-      contractor:[102,564,105], contractorPhone:[230,564,70], contractorCompany:[304,564,90]
+      workPermitNo:[427,775,105], writtenDate:[427,758,105],
+      workDate:[88,650,105], startTime:[257,650,75], endTime:[389,650,75],
+      description:[96,628,390], equipment:[84,607,235], area:[327,607,145],
+      carLicense:[103,543,290],
+      requester:[102,520,105], requesterPhone:[230,520,70], requesterCompany:[304,520,90],
+      jobOwner:[102,498,105], jobOwnerPhone:[230,498,70],
+      contractor:[102,476,105], contractorPhone:[230,476,70], contractorCompany:[304,476,90]
     };
     const CHECK={
       permit:{
-        "งานทั่วไป":[64,730],"งานในพื้นที่อับอากาศ":[170,730],"งานบนที่สูง > 1.8 m.":[278,730],
-        "งานขุด":[384,730],"งานที่เกี่ยวข้องกับรังสี":[491,730],
-        "Hot Work":[64,714],"งานยก (Mobile Crane)":[170,714],"งานไฟฟ้า":[278,714],"อื่นๆ":[384,714]
+        "งานทั่วไป":[64,716],"งานในพื้นที่อับอากาศ":[170,716],"งานบนที่สูง > 1.8 m.":[278,716],
+        "งานขุด":[384,716],"งานที่เกี่ยวข้องกับรังสี":[491,716],
+        "Hot Work":[64,694],"งานยก (Mobile Crane)":[170,694],"งานไฟฟ้า":[278,694],"อื่นๆ":[384,694]
       },
       work:{
-        "งานก่อสร้าง":[96,640],"ระบบภายในอาคาร":[258,640],"งานจัดการอาคาร":[420,640],
-        "งานซ่อมบำรุง":[96,624],"Security":[258,624],"อื่นๆ":[420,624]
+        "งานก่อสร้าง":[96,584],"ระบบภายในอาคาร":[258,584],"งานจัดการอาคาร":[420,584],
+        "งานซ่อมบำรุง":[96,562],"Security":[258,562],"อื่นๆ":[420,562]
       },
       docs:{
         "JSA":[43,529],"Cer. จป.":[258,529],"รายชื่อผู้ปฏิบัติงาน":[43,513],
@@ -114,7 +115,7 @@ async function previewFilledPdf(){
     await put(data.requester,"requester"); await put(data.requesterPhone,"requesterPhone"); await put(data.requesterCompany,"requesterCompany");
     await put(data.jobOwner,"jobOwner"); await put(data.jobOwnerPhone,"jobOwnerPhone");
     await put(data.contractor,"contractor"); await put(data.contractorPhone,"contractorPhone"); await put(data.contractorCompany,"contractorCompany");
-    if(CHECK.permit[data.permitType])cross(CHECK.permit[data.permitType]);
+    (data.permitTypes||[]).forEach(t=>{if(CHECK.permit[t])cross(CHECK.permit[t])});
     if(CHECK.work[data.workType])cross(CHECK.work[data.workType]);
     data.docs.forEach(d=>{if(CHECK.docs[d])cross(CHECK.docs[d])});
 
@@ -125,6 +126,6 @@ async function previewFilledPdf(){
 }
 byId("wp-preview")?.addEventListener("click",previewFilledPdf);
 const st=document.createElement("style");st.textContent=`
-.wp-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 18px}.wp-summary>div{padding:12px;border:1px solid #dbe3ec;border-radius:10px;background:#f8fafc}.wp-summary small{display:block;color:#64748b;margin-bottom:4px}.wp-summary strong{word-break:break-word}.wp-subsection{border-top:1px solid #e5e7eb;padding-top:12px}.wp-subsection h3{margin:0 0 10px}.wp-checks{display:flex;flex-wrap:wrap;gap:10px 22px;border:1px solid #dbe3ec;border-radius:10px;padding:14px}.wp-checks label{display:flex;align-items:center;gap:7px}.form-hint{color:#64748b;font-size:.9rem;margin-top:10px}@media(max-width:760px){.wp-summary{grid-template-columns:1fr 1fr}}`;document.head.appendChild(st);
+.wp-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 18px}.wp-summary>div{padding:12px;border:1px solid #dbe3ec;border-radius:10px;background:#f8fafc}.wp-summary small{display:block;color:#64748b;margin-bottom:4px}.wp-summary strong{word-break:break-word}.wp-subsection{border-top:1px solid #e5e7eb;padding-top:12px}.wp-subsection h3{margin:0 0 10px}.wp-checks{display:flex;flex-wrap:wrap;gap:10px 22px;border:1px solid #dbe3ec;border-radius:10px;padding:14px}.wp-checks label{display:flex;align-items:center;gap:7px}.wp-permit-types{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;border:1px solid #dbe3ec;border-radius:10px;padding:12px}.wp-permit-types label{display:flex;align-items:center;gap:7px;font-weight:400}.form-hint{color:#64748b;font-size:.9rem;margin-top:10px}@media(max-width:760px){.wp-summary{grid-template-columns:1fr 1fr}}`;document.head.appendChild(st);
 window.WorkPermitForm={collect,validate,runNumber,syncAttendees};
 })();
