@@ -51,11 +51,35 @@ function validate(){
   return true;
 }
 byId("wp-run-number")?.addEventListener("click",runNumber);
-byId("wp-preview")?.addEventListener("click",()=>{
-  const url=new URL("./assets/FR-125-v03%20Work%20Permit-1.pdf",window.location.href).href;
-  const w=window.open(url,"_blank");
-  if(!w) window.location.href=url;
-});
+async function previewFilledPdf(){
+  const popup=window.open("","_blank");
+  try{
+    if(!window.PDFLib) throw new Error("PDF library not loaded");
+    const data=collect(), url=new URL("./assets/FR-125-v03%20Work%20Permit-1.pdf",window.location.href).href;
+    const bytes=await fetch(url).then(r=>{if(!r.ok)throw new Error("โหลด FR-125 ไม่สำเร็จ");return r.arrayBuffer()});
+    const pdf=await PDFLib.PDFDocument.load(bytes), page=pdf.getPages()[0], {width:w,height:h}=page.getSize();
+    const font=await pdf.embedFont(PDFLib.StandardFonts.Helvetica);
+    const text=(s,x,y,size=8)=>{if(!s)return;page.drawText(String(s),{x:w*x/100,y:h-h*y/100,size,font,color:PDFLib.rgb(0,0,0),maxWidth:w*.28})};
+    const mark=(on,x,y)=>{if(on)page.drawText("X",{x:w*x/100,y:h-h*y/100,size:9,font})};
+    text(data.workPermitNo,73,7.9,8);
+    text(data.startDate,28,23.5,8); text(data.startTime,52,23.5,8); text(data.endTime,73,23.5,8);
+    text(data.description,28,26.3,8); text(data.equipment,20,28.8,8); text(data.area,69,28.8,8);
+    text(data.carLicense,25,34.5,8);
+    text(data.requester,25,37.2,8); text(data.requesterPhone,54,37.2,8); text(data.requesterCompany,71,37.2,8);
+    text(data.jobOwner,28,39.5,8); text(data.jobOwnerPhone,54,39.5,8);
+    text(data.contractor,30,41.8,8); text(data.contractorPhone,54,41.8,8); text(data.contractorCompany,71,41.8,8);
+    const permit={"งานทั่วไป":[8,16.7],"งานในพื้นที่อับอากาศ":[28,16.7],"งานบนที่สูง > 1.8 m.":[50,16.7],"งานขุด":[70,16.7],"งานที่เกี่ยวข้องกับรังสี":[83,16.7],"Hot Work":[8,19],"งานยก (Mobile Crane)":[28,19],"งานไฟฟ้า":[50,19],"อื่นๆ":[70,19]};
+    if(permit[data.permitType])mark(true,...permit[data.permitType]);
+    const wt={"งานก่อสร้าง":[15,31],"ระบบภายในอาคาร":[44,31],"งานจัดการอาคาร":[74,31],"งานซ่อมบำรุง":[15,33.2],"Security":[44,33.2],"อื่นๆ":[74,33.2]};
+    if(wt[data.workType])mark(true,...wt[data.workType]);
+    const dm={"JSA":[8.5,45.4],"Cer. จป.":[44.7,45.4],"รายชื่อผู้ปฏิบัติงาน":[8.5,47.7],"แบบตรวจความปลอดภัยตามประเภทงานเสี่ยง":[44.7,47.7],"รายการเครื่องมือ/อุปกรณ์":[8.5,50],"SDS":[44.7,50]};
+    data.docs.forEach(d=>{if(dm[d])mark(true,...dm[d])});
+    const out=await pdf.save(), blob=new Blob([out],{type:"application/pdf"}), blobUrl=URL.createObjectURL(blob);
+    if(popup)popup.location.href=blobUrl;else window.location.href=blobUrl;
+    setTimeout(()=>URL.revokeObjectURL(blobUrl),60000);
+  }catch(e){if(popup)popup.close();alert(e.message||"สร้าง Preview FR-125 ไม่สำเร็จ")}
+}
+byId("wp-preview")?.addEventListener("click",previewFilledPdf);
 const st=document.createElement("style");st.textContent=`
 .wp-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 18px}.wp-summary>div{padding:12px;border:1px solid #dbe3ec;border-radius:10px;background:#f8fafc}.wp-summary small{display:block;color:#64748b;margin-bottom:4px}.wp-summary strong{word-break:break-word}.wp-subsection{border-top:1px solid #e5e7eb;padding-top:12px}.wp-subsection h3{margin:0 0 10px}.wp-checks{display:flex;flex-wrap:wrap;gap:10px 22px;border:1px solid #dbe3ec;border-radius:10px;padding:14px}.wp-checks label{display:flex;align-items:center;gap:7px}.form-hint{color:#64748b;font-size:.9rem;margin-top:10px}@media(max-width:760px){.wp-summary{grid-template-columns:1fr 1fr}}`;document.head.appendChild(st);
 window.WorkPermitForm={collect,validate,runNumber,syncAttendees};
