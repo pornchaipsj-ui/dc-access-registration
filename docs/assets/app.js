@@ -398,6 +398,7 @@ try {
     submitButton.textContent = "กำลังส่งข้อมูล…";
     try {
       if (window.WorkPermitForm?.validate && !window.WorkPermitForm.validate()) return;
+      if (window.WorkPermitForm?.ensureNumber) await window.WorkPermitForm.ensureNumber();
       const request = collectRequest();
       const result = await submitRequest(request, parsedAttendees);
       showResult(result);
