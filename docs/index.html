@@ -64,21 +64,21 @@
 
 
       <section class="panel" id="work-permit-section">
-        <div class="panel__header">
-          <div>
-            <h2>2. ใบขออนุญาตปฏิบัติงาน / Work Permit (FR-125)</h2>
-            <p>ใช้แบบฟอร์มต้นฉบับ Sheet “FR-125-v03 (TH)” และกรอกข้อมูลลงบนตำแหน่งเดิมของเอกสาร</p>
-          </div>
-          <span class="badge">FR-125-v03 (TH)</span>
-        </div>
-        <div id="fr125-original-form" class="fr125-original-form">
-          <div class="file-status">กำลังโหลดแบบฟอร์ม FR-125 ภาษาไทยต้นฉบับ…</div>
-        </div>
-        <div class="form-actions wp-actions">
-          <button id="wp-preview" class="button button--secondary" type="button">Preview FR-125 / ตรวจสอบเอกสาร</button>
-          <button id="wp-print" class="button button--secondary" type="button">Print FR-125 / พิมพ์เอกสาร</button>
-        </div>
-      </section>
+  <div class="panel__header"><div><h2>2. ข้อมูล Work Permit / FR-125</h2><p>กรอกเฉพาะข้อมูลที่ยังไม่มีด้านบน ระบบจะเก็บเป็น Record แล้วนำไปสร้าง FR-125 จาก Master Template ภายหลัง</p></div><span class="badge">Record → FR-125</span></div>
+  <div id="fr125-original-form" class="fr125-record-form">
+    <div class="wp-auto-strip"><div><small>วันที่ทำงาน</small><strong id="wp-auto-date">-</strong></div><div><small>Scope</small><strong id="wp-auto-scope">-</strong></div><div><small>Area</small><strong id="wp-auto-area">-</strong></div><div><small>Requester</small><strong id="wp-auto-requester">-</strong></div></div>
+    <div class="wp-record-card"><h3>Permit Type <small>เลือกได้มากกว่า 1</small></h3><div class="wp-check-grid">
+      <label><input type="checkbox" name="wp-permit-type" value="งานทั่วไป"> งานทั่วไป / General Work</label><label><input type="checkbox" name="wp-permit-type" value="งานในพื้นที่อับอากาศ"> Confined Space</label><label><input type="checkbox" name="wp-permit-type" value="งานบนที่สูง > 1.8 m."> Work at Height &gt;1.8m</label><label><input type="checkbox" name="wp-permit-type" value="งานขุด"> Excavation</label><label><input type="checkbox" name="wp-permit-type" value="งานที่เกี่ยวข้องกับรังสี"> Radiation</label><label><input type="checkbox" name="wp-permit-type" value="Hot Work"> Hot Work</label><label><input type="checkbox" name="wp-permit-type" value="งานยก (Mobile Crane)"> Lifting (Mobile Crane)</label><label><input type="checkbox" name="wp-permit-type" value="งานไฟฟ้า"> Electrical Work</label><label><input type="checkbox" name="wp-permit-type" value="อื่นๆ"> Other</label>
+    </div></div>
+    <div class="wp-record-card"><h3>Work Details</h3><div class="wp-fields">
+      <label>Start Time *<input id="wp-start-time" type="time" required></label><label>End Time *<input id="wp-end-time" type="time" required></label><label>Equipment<input id="wp-equipment"></label><label>Contractor Job Controller *<input id="wp-contractor-controller" required></label><label>Contractor Phone *<input id="wp-contractor-phone" required></label><label>Contractor Company *<input id="wp-contractor-company" required></label>
+    </div><h4>Type of Work</h4><div class="wp-check-grid"><label><input type="checkbox" name="wp-work-type" value="งานก่อสร้าง"> Construction</label><label><input type="checkbox" name="wp-work-type" value="ระบบภายในอาคาร"> Building Internal Systems</label><label><input type="checkbox" name="wp-work-type" value="งานจัดการอาคาร"> Building Management</label><label><input type="checkbox" name="wp-work-type" value="งานซ่อมบำรุง"> Maintenance</label><label><input type="checkbox" name="wp-work-type" value="Security"> Security</label><label><input type="checkbox" name="wp-work-type" value="อื่นๆ"> Other</label></div></div>
+    <div class="wp-record-card"><h3>Supporting Documents</h3><div class="wp-check-grid"><label><input id="wp-jsa" type="checkbox"> JSA</label><label><input id="wp-supervisor-cert" type="checkbox"> Cer. จป.</label><label><input id="wp-personnel" type="checkbox"> Personnel List</label><label><input id="wp-risk-checklist" type="checkbox"> Risk Work Checklist</label><label><input id="wp-tools-list" type="checkbox"> Tools / Equipment List</label><label><input id="wp-sds" type="checkbox"> SDS (if any)</label></div></div>
+    <div class="wp-record-card"><h3>PPE ตามความเสี่ยง</h3><div class="wp-check-grid ppe"><label><input type="checkbox" value="อุปกรณ์ป้องกันศีรษะ"> Head</label><label><input type="checkbox" value="อุปกรณ์ป้องกันเสียง"> Hearing</label><label><input type="checkbox" value="อุปกรณ์ป้องกันเท้า"> Foot</label><label><input type="checkbox" value="อุปกรณ์ป้องกันใบหน้าและดวงตา"> Face / Eye</label><label><input type="checkbox" value="อุปกรณ์ป้องกันการหายใจ"> Respiratory</label><label><input type="checkbox" value="อุปกรณ์ป้องกันการตกจากที่สูง"> Fall Protection</label><label><input type="checkbox" value="อุปกรณ์ป้องกันมือ"> Hand</label><label><input type="checkbox" value="อุปกรณ์ป้องกันลำตัว"> Body</label></div></div>
+  </div>
+  <div class="form-actions wp-actions"><button id="wp-preview" class="button button--secondary" type="button">Preview Record / ตรวจสอบข้อมูล</button></div>
+  <p class="form-hint">ข้อมูลเดิม เช่น Date, Scope, Area, Requester, Host และทะเบียนรถจาก FR-333 จะใช้ข้อมูลเดิม ไม่ต้องกรอกซ้ำ</p>
+</section>
 
       <section class="panel">
         <div class="panel__header">
@@ -125,7 +125,7 @@
   <script src="./assets/fr333.js?v=1" defer></script>
   <script src="./assets/fr333-registration.js?v=1" defer></script>
   <script src="./assets/work-area-multiselect.js?v=2" defer></script>
-  <script src="./assets/work-permit.js?v=19" defer></script>
+  <script src="./assets/work-permit.js?v=20" defer></script>
   <script src="./assets/app.js?v=26" defer></script>
 </body>
 </html>
