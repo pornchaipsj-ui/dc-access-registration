@@ -332,6 +332,11 @@ try {
   async function submitRequest(request, attendees) {
     if (demoMode) return saveDemoRequest(request, attendees);
     const client = await getClient();
+    if (request.work_permit && !request.work_permit.workPermitNo) {
+      const { data: wpNo, error: wpError } = await client.rpc("reserve_work_permit_no");
+      if (wpError) throw wpError;
+      request.work_permit.workPermitNo = wpNo;
+    }
     const { data, error } = await client.rpc("submit_access_request", {
       p_request: request,
       p_attendees: attendees
